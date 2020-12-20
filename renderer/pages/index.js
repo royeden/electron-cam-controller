@@ -1,4 +1,4 @@
-import Camera from "../components/Camera2";
+import Camera from "../components/Camera";
 
 const Home = () => {
   return (
