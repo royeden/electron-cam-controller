@@ -1,3 +1,6 @@
+// THX <3 <3 <3
+// https://medium.com/@kirstenlindsmith/translating-posenet-into-react-js-58f438c8605d
+
 import { useEffect, useRef, useState } from "react";
 import * as poseNet from "@tensorflow-models/posenet";
 import "@tensorflow/tfjs-backend-webgl";

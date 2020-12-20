@@ -1,3 +1,6 @@
+// THX <3 <3 <3
+// https://github.com/tensorflow/tfjs-models/blob/master/posenet/demos/demo_util.js
+
 import * as posenet from '@tensorflow-models/posenet'
 
 const pointRadius = 3
