@@ -1,9 +1,6 @@
 module.exports = {
   purge: [
-    './renderer/pages/**/*.jsx',
-    './renderer/components/**/*.jsx',
-    './renderer/pages/**/*.js',
-    './renderer/components/**/*.js'
+    './renderer/**/*.jsx',
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
