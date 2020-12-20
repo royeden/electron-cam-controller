@@ -10,12 +10,14 @@ import useAnimationFrame from "../lib/hooks/useAnimationFrame";
 
 import Button from "./Button";
 import useToggle from "../lib/hooks/useToggle";
+import { map } from "../utils/p5";
 
 const VIDEO = {
   height: 480,
   width: 640,
 };
 
+// TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
 
 export default function Camera() {
@@ -28,7 +30,13 @@ export default function Camera() {
   const [cameraOn, toggleCameraOn] = useToggle();
   const [camera, setCamera] = useState(0);
   const [oscPort, setOscPort] = useState(3333);
-  const [oscPortValue, setOscPortValue] = useState(3333);
+  const [maxMapParts, setMaxMapParts] = useState(1000);
+  const [minMapParts, setMinMapParts] = useState(0);
+  const [maxMapRGB, setMaxMapRGB] = useState(1000);
+  const [minMapRGB, setMinMapRGB] = useState(0);
+  const [maxMapScore, setMaxMapScore] = useState(1000);
+  const [minMapScore, setMinMapScore] = useState(0);
+  const [] = useState(0);
   const [oscLoaded, toggleOscLoaded] = useToggle();
   const [minScore, setMinScore] = useState(0.3);
   const [cameras, setCameras] = useState([]);
@@ -166,6 +174,9 @@ export default function Camera() {
           r /= pixels.length / 4;
           g /= pixels.length / 4;
           b /= pixels.length / 4;
+          r = map(r, 0, 255, minMapRGB, maxMapRGB);
+          g = map(g, 0, 255, minMapRGB, maxMapRGB);
+          b = map(b, 0, 255, minMapRGB, maxMapRGB);
 
           sendOsc("/rgb", r, g, b);
         } catch (e) {
@@ -178,13 +189,22 @@ export default function Camera() {
           const { score, keypoints } = await net.estimateSinglePose(video, {
             flipHorizontal: true,
           });
-          sendOsc("/score", score);
+          sendOsc("/score", map(score, 0, 1, minMapScore, maxMapScore));
           keypoints.forEach(
             ({ part, score: partScore, position: { x, y } }) => {
               // TODO map values
-              sendOsc(`/${part}/score`, partScore);
-              sendOsc(`/${part}/x`, x);
-              sendOsc(`/${part}/y`, y);
+              sendOsc(
+                `/${part}/score`,
+                map(partScore, 0, 1, minMapScore, maxMapScore)
+              );
+              sendOsc(
+                `/${part}/x`,
+                map(x, 0, VIDEO.width, minMapParts, maxMapParts, true)
+              );
+              sendOsc(
+                `/${part}/y`,
+                map(y, 0, VIDEO.height, minMapParts, maxMapParts, true)
+              );
             }
           );
           canvasContext.clearRect(0, 0, VIDEO.width, VIDEO.height);
@@ -207,7 +227,20 @@ export default function Camera() {
         drawCamera();
       }
     }
-  }, [cameraOn, clientSet, minScore, modelActive, modelLoaded, modelSkeleton]);
+  }, [
+    cameraOn,
+    clientSet,
+    maxMapParts,
+    maxMapRGB,
+    maxMapScore,
+    minMapParts,
+    minMapRGB,
+    minMapScore,
+    minScore,
+    modelActive,
+    modelLoaded,
+    modelSkeleton,
+  ]);
 
   return (
     <>
@@ -260,6 +293,84 @@ export default function Camera() {
             value={oscPort}
           />
           <Button>Set port</Button>
+        </div>
+        <div>
+          <label className="cursor-pointer" htmlFor="min-rgb">
+            RGB map min:
+          </label>
+          <input
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            id="min-rgb"
+            onChange={(event) => setMinMapRGB(event.target.value)}
+            step="1"
+            type="number"
+            value={minMapRGB}
+          />
+        </div>
+        <div>
+          <label className="cursor-pointer" htmlFor="max-rgb">
+            RGB map max:
+          </label>
+          <input
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            id="max-rgb"
+            onChange={(event) => setMaxMapRGB(event.target.value)}
+            step="1"
+            type="number"
+            value={maxMapRGB}
+          />
+        </div>
+        <div>
+          <label className="cursor-pointer" htmlFor="min-score">
+            Score map min:
+          </label>
+          <input
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            id="min-score"
+            onChange={(event) => setMinMapScore(event.target.value)}
+            step="1"
+            type="number"
+            value={minMapScore}
+          />
+        </div>
+        <div>
+          <label className="cursor-pointer" htmlFor="max-score">
+            Score map max:
+          </label>
+          <input
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            id="max-score"
+            onChange={(event) => setMaxMapScore(event.target.value)}
+            step="1"
+            type="number"
+            value={maxMapScore}
+          />
+        </div>
+        <div>
+          <label className="cursor-pointer" htmlFor="min-parts">
+            Parts map min:
+          </label>
+          <input
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            id="min-parts"
+            onChange={(event) => setMinMapParts(event.target.value)}
+            step="1"
+            type="number"
+            value={minMapParts}
+          />
+        </div>
+        <div>
+          <label className="cursor-pointer" htmlFor="max-parts">
+            Parts map max:
+          </label>
+          <input
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            id="max-parts"
+            onChange={(event) => setMaxMapParts(event.target.value)}
+            step="1"
+            type="number"
+            value={maxMapParts}
+          />
         </div>
         <span>Client listening: {clientSet ? "Yes!" : "Nope :("}</span>
         <span>Tracking: {modelActive ? "Active!" : "Off"}</span>
