@@ -17,6 +17,8 @@ app.on('ready', async () => {
     webPreferences: {
       nodeIntegration: false,
       preload: join(__dirname, 'preload.js'),
+      devTools: isDev,
+      backgroundColor: "#000"
     },
   })
 

@@ -1,32 +1,59 @@
 {
-  "name": "with-electron",
-  "productName": "ElectronNext",
-  "version": "1.0.0",
+  "name": "osc-cam",
+  "author": {
+    "name": "Roy Eden",
+    "email": "roy.ede@gmail.com"
+  },
+  "productName": "osc-cam",
+  "description": "",
+  "version": "0.0.1",
   "main": "main/index.js",
   "scripts": {
+    "tailwind": "tailwindcss-cli build -o renderer/styles/tailwind.css",
+    "tailwind-prod": "NODE_ENV=production tailwindcss-cli build -o renderer/styles/tailwind.css",
     "clean": "rimraf dist renderer/.next renderer/out",
-    "start": "electron .",
-    "build": "next build renderer && next export renderer",
+    "dev": "npm run tailwind && electron .",
+    "start": "npm run tailwind-prod && electron .",
+    "build": "npm run tailwind-prod && next build renderer && next export renderer",
     "pack-app": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder"
   },
   "build": {
+    "productName": "osc-cam",
     "asar": true,
     "files": [
       "main",
       "renderer/out"
-    ]
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Science"
+    }
   },
   "devDependencies": {
+    "autoprefixer": "^10.1.0",
     "electron": "^7.1.7",
     "electron-builder": "^21.2.0",
     "next": "latest",
+    "postcss": "^8.2.1",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "tailwindcss": "^2.0.2",
+    "tailwindcss-cli": "^0.1.2"
   },
   "dependencies": {
+    "@tensorflow-models/posenet": "^2.2.1",
+    "@tensorflow/tfjs": "^2.8.1",
     "electron-is-dev": "^1.1.0",
-    "electron-next": "^3.1.5"
+    "electron-next": "^3.1.5",
+    "osc-js": "^2.1.0"
   },
   "license": "MIT"
 }
