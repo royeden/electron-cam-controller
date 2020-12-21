@@ -1,10 +1,10 @@
 {
-  "name": "osc-cam",
+  "name": "electron-osc-cam",
   "author": {
     "name": "Roy Eden",
     "email": "roy.ede@gmail.com"
   },
-  "productName": "osc-cam",
+  "productName": "electron-osc-cam",
   "description": "",
   "version": "0.0.2",
   "main": "main/index.js",
@@ -19,7 +19,7 @@
     "dist": "npm run build && electron-builder"
   },
   "build": {
-    "productName": "osc-cam",
+    "productName": "electron-osc-cam",
     "asar": true,
     "files": [
       "main",
