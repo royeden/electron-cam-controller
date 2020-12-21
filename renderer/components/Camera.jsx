@@ -20,6 +20,7 @@ const VIDEO = {
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
+const defaultPort = 3333;
 
 export default function Camera() {
   const posenet = useRef(null);
@@ -27,8 +28,8 @@ export default function Camera() {
   const canvasRef = useRef(null);
   const [cameraOn, toggleCameraOn] = useToggle();
   const [camera, setCamera] = useState(0);
-  const [oscPort, setOscPort] = useState(3333);
-  const [oscPortValue, setOscPortValue] = useState(oscPort);
+  const [oscPort, setOscPort] = useState(`${defaultPort}`);
+  const [oscPortValue, setOscPortValue] = useState(defaultPort);
   const [maxMapParts, setMaxMapParts] = useState(1000);
   const [minMapParts, setMinMapParts] = useState(0);
   const [maxMapRGB, setMaxMapRGB] = useState(1000);
@@ -52,16 +53,17 @@ export default function Camera() {
   );
 
   const createClient = useCallback(() => {
-    overrideOscLoaded(false);
-    const port = Number(oscPort);
-    if (process.browser && port > 999 && port < 10000) {
+    const port = parseInt(oscPort, 10);
+    if (isNaN(port) || port < 1000 || port > 9999) setOscPort(oscPortValue);
+    else if (process.browser) {
+      overrideOscLoaded(false);
       window.ipcRenderer.send(OSC_EVENTS.create, port);
-      window.ipcRenderer.once(OSC_EVENTS.created, () =>
-        overrideOscLoaded(true)
-      );
-      setOscPortValue(port);
+      window.ipcRenderer.once(OSC_EVENTS.created, () => {
+        overrideOscLoaded(true);
+        setOscPortValue(port);
+      });
     }
-  }, [oscPort]);
+  }, [oscPort, oscPortValue]);
 
   useEffect(() => {
     if (process.browser) {
@@ -294,12 +296,7 @@ export default function Camera() {
             type="number"
             value={oscPort}
           />
-          <Button
-            disabled={oscPort && oscPort > 999 && oscPort < 10000}
-            onClick={createClient}
-          >
-            Set port
-          </Button>
+          <Button onClick={createClient}>Set port</Button>
         </div>
         <div>
           <label className="cursor-pointer" htmlFor="min-rgb">
