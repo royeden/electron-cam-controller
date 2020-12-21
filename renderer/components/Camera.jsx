@@ -1,7 +1,7 @@
 // THX <3 <3 <3
 // https://medium.com/@kirstenlindsmith/translating-posenet-into-react-js-58f438c8605d
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as poseNet from "@tensorflow-models/posenet";
 import "@tensorflow/tfjs-backend-webgl";
 
@@ -11,6 +11,7 @@ import useAnimationFrame from "../lib/hooks/useAnimationFrame";
 import Button from "./Button";
 import useToggle from "../lib/hooks/useToggle";
 import { map } from "../utils/p5";
+import OSC_EVENTS from "../../main/events/osc";
 
 const VIDEO = {
   height: 480,
@@ -21,15 +22,13 @@ const VIDEO = {
 const skeletonLineWidth = 5;
 
 export default function Camera() {
-  const osc = useRef(null);
-  const client = useRef(null);
   const posenet = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [clientSet, toggleClientSet] = useToggle();
   const [cameraOn, toggleCameraOn] = useToggle();
   const [camera, setCamera] = useState(0);
   const [oscPort, setOscPort] = useState(3333);
+  const [oscPortValue, setOscPortValue] = useState(oscPort);
   const [maxMapParts, setMaxMapParts] = useState(1000);
   const [minMapParts, setMinMapParts] = useState(0);
   const [maxMapRGB, setMaxMapRGB] = useState(1000);
@@ -37,30 +36,39 @@ export default function Camera() {
   const [maxMapScore, setMaxMapScore] = useState(1000);
   const [minMapScore, setMinMapScore] = useState(0);
   const [] = useState(0);
-  const [oscLoaded, toggleOscLoaded] = useToggle();
+  const [oscLoaded, , overrideOscLoaded] = useToggle();
   const [minScore, setMinScore] = useState(0.3);
   const [cameras, setCameras] = useState([]);
   const [modelActive, toggleModelActive] = useToggle();
   const [modelLoaded, , setModelLoaded] = useToggle();
   const [modelSkeleton, toggleModelSkeleton] = useToggle();
 
-  useEffect(() => {
-    if (process.browser) {
-      if (window.osc) {
-        osc.current = window.osc;
-        toggleOscLoaded();
-      }
+  const sendOSCMessage = useCallback(
+    (route, ...messages) => {
+      if (process.browser && oscLoaded)
+        window.ipcRenderer.send(OSC_EVENTS.send, route, ...messages);
+    },
+    [oscLoaded]
+  );
+
+  const createClient = useCallback(() => {
+    overrideOscLoaded(false);
+    const port = Number(oscPort);
+    if (process.browser && port > 999 && port < 10000) {
+      window.ipcRenderer.send(OSC_EVENTS.create, port);
+      window.ipcRenderer.once(OSC_EVENTS.created, () =>
+        overrideOscLoaded(true)
+      );
+      setOscPortValue(port);
     }
-  }, []);
+  }, [oscPort]);
 
   useEffect(() => {
-    const OSC = osc.current;
-    if (oscLoaded && OSC) {
-      client.current = window.client;
-      client.current.open();
-      toggleClientSet();
+    if (process.browser) {
+      window.ipcRenderer.on(OSC_EVENTS.sent, console.log);
     }
-  }, [oscLoaded]);
+    createClient();
+  }, []);
 
   useEffect(() => {
     function getCameras() {
@@ -133,19 +141,11 @@ export default function Camera() {
   }, []);
 
   useAnimationFrame(() => {
-    const CLIENT = client.current;
-    const OSC = osc.current;
     const video = videoRef?.current;
     const canvas = canvasRef?.current;
     const net = posenet?.current;
     if (cameraOn && canvas) {
       const canvasContext = canvas.getContext("2d");
-
-      function sendOsc(route, ...messages) {
-        if (clientSet && CLIENT && OSC) {
-          CLIENT.send(new OSC.Message(route, ...messages));
-        }
-      }
 
       function drawCamera() {
         canvasContext.clearRect(0, 0, VIDEO.width, VIDEO.height);
@@ -178,7 +178,7 @@ export default function Camera() {
           g = map(g, 0, 255, minMapRGB, maxMapRGB);
           b = map(b, 0, 255, minMapRGB, maxMapRGB);
 
-          sendOsc("/rgb", r, g, b);
+          sendOSCMessage("/rgb", r, g, b);
         } catch (e) {
           console.log(e);
         }
@@ -189,19 +189,19 @@ export default function Camera() {
           const { score, keypoints } = await net.estimateSinglePose(video, {
             flipHorizontal: true,
           });
-          sendOsc("/score", map(score, 0, 1, minMapScore, maxMapScore));
+          sendOSCMessage("/score", map(score, 0, 1, minMapScore, maxMapScore));
           keypoints.forEach(
             ({ part, score: partScore, position: { x, y } }) => {
               // TODO map values
-              sendOsc(
+              sendOSCMessage(
                 `/${part}/score`,
                 map(partScore, 0, 1, minMapScore, maxMapScore)
               );
-              sendOsc(
+              sendOSCMessage(
                 `/${part}/x`,
                 map(x, 0, VIDEO.width, minMapParts, maxMapParts, true)
               );
-              sendOsc(
+              sendOSCMessage(
                 `/${part}/y`,
                 map(y, 0, VIDEO.height, minMapParts, maxMapParts, true)
               );
@@ -229,7 +229,6 @@ export default function Camera() {
     }
   }, [
     cameraOn,
-    clientSet,
     maxMapParts,
     maxMapRGB,
     maxMapScore,
@@ -287,12 +286,20 @@ export default function Camera() {
             id="osc-port"
             min="1000"
             max="9999"
+            onKeyDown={(event) => {
+              if (event.key === "Enter") createClient();
+            }}
             onChange={(event) => setOscPort(event.target.value)}
             step="1"
             type="number"
             value={oscPort}
           />
-          <Button>Set port</Button>
+          <Button
+            disabled={oscPort && oscPort > 999 && oscPort < 10000}
+            onClick={createClient}
+          >
+            Set port
+          </Button>
         </div>
         <div>
           <label className="cursor-pointer" htmlFor="min-rgb">
@@ -372,7 +379,10 @@ export default function Camera() {
             value={maxMapParts}
           />
         </div>
-        <span>Client listening: {clientSet ? "Yes!" : "Nope :("}</span>
+        <span>
+          Client listening:{" "}
+          {oscLoaded ? `Yes! Sending data to port ${oscPortValue}` : "Nope :("}
+        </span>
         <span>Tracking: {modelActive ? "Active!" : "Off"}</span>
         <span>Skeleton: {modelSkeleton ? "Active!" : "Off"}</span>
         <span>Model: {modelLoaded ? "Loaded!" : "Loading..."}</span>
