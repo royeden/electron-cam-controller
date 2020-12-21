@@ -140,9 +140,9 @@ Para generar una versión del proyecto para las plataformas soportadas (Windows 
 
 ## Como colaborar con este proyecto
 
-* Cualquier tipo de feedback es bienvenido! No te olvides de dejarlo plasmado en un issue.
+* Cualquier tipo de feedback es bienvenido! No te olvides de dejarlo plasmado en un [issue](https://github.com/royeden/electron-osc-cam/issues).
 
-* Cualquier ejemplo en distintas plataformas es apreciado, no te olvides de hacer un fork y dejar tu PR :) . Los ejemplos se van a encontrar en la carpeta `examples`.
+* Cualquier ejemplo en distintas plataformas es apreciado, no te olvides de hacer un fork y [dejar tu PR](https://github.com/royeden/electron-osc-cam/pulls) :) . Los ejemplos se van a encontrar en la carpeta `examples`.
 
 * Cualquier contribución adicional al código es un montón y se super aprecia. Por ahora no está todo muy listo para reforzar estándares de código, pero esperemos que pronto se pueda usar.
 
