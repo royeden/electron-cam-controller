@@ -13,7 +13,9 @@ Las funcionalidades incluídas son las siguientes (dependen todas de la cámara 
 
 * Puerto OSC de envío de datos (configurable, por defecto el puerto es el `3333`).
 * En base al feed de la cámara, calcula el promedio de colores y lo envía vía OSC a la ruta `/rgb`. El mensaje consta de los tres valores independientes de `r`, `g` y `b`, transformados entre los valores especificados en la aplicación (por defecto, entre `0` y `1000`).
-* Una vez que el modelo de posenet (inteligencia artificial para determinar poses del cuerpo)
+* Una vez que el modelo de posenet (inteligencia artificial para determinar poses del cuerpo) este cargado, se puede habilitar para que envíe los parámetros de las poses detectadas vía OSC: La ruta `/score` recibe a puntuación total de certeza de que se encuentra una parte del cuerpo en la cámara, el valor es transformado entre los valores especificados en la aplicación (por defecto, entre `0` y `1000`). También envía información a rutas de cada parte independiente que detecta el modelo, esas posibles rutas son: `/nose, /leftEye, /rightEye, /leftEar, /rightEar, /leftShoulder, /rightShoulder, /leftElbow, /rightElbow, /leftWrist, /rightWrist, /leftHip, /rightHip, /leftKnee, /rightKnee, /leftAnkle, /rightAnkle`, las cuales tienen a su vez las siguientes subrutas: `/score, /x, /y`, las cuales determinan la certeza de que la parte aparezca en cámara, posición en el eje X (de izquierda a derecha) y posición en el eje Y (de arriba a abajo) de las partes del cuerpo detectadas respectivamente, transformadas entre los valores especificados en la aplicación (por defecto, entre `0` y `1000`).
+
+* Una vez habilitado el modelo, se puede habilitar la opición que muestra el esqueleto que el modelo está procesando (a veces deibuja cruces entre las líneas, pero lo que importa son los puntos, no las líneas). Hay un slider de rango que permite controlar a partir de qué porcentaje de certeza debería dibujar las líneas (y que próximamente puede que se use para otras cosas :) ).
 
 ## Plataformas soportadas:
 
