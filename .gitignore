@@ -11,6 +11,7 @@
 # next.js
 /renderer/.next/
 /renderer/out/
+/renderer/styles/
 
 # production
 /dist
