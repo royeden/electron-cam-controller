@@ -12,6 +12,7 @@ const prepareNext = require("electron-next");
 const OSC_EVENTS = require("./events/osc");
 
 const i18n = require("./i18n");
+const { defaultLocale, locales } = require("./i18n.config");
 const menuFactoryService = require("./services/menuFactory");
 
 const {
@@ -21,7 +22,6 @@ const {
 
 // Prepare the renderer once the app is ready
 app.on("ready", async () => {
-  console.log("locale", app.getLocale());
   mainWindow = new BrowserWindow({
     width: 960,
     height: 600,
@@ -57,7 +57,7 @@ app.on("ready", async () => {
   }
 
   i18n.on("loaded", (loaded) => {
-    i18n.changeLanguage("en");
+    i18n.changeLanguage(locales.find(locale => app.getLocale().includes(locale)) || defaultLocale);
     i18n.off("loaded");
   });
 
@@ -71,11 +71,11 @@ app.on("ready", async () => {
   });
 
   ipcMain.on("get-initial-language", (event, arg) => {
-    i18n.changeLanguage("en");
+    i18n.changeLanguage(locales.find(locale => app.getLocale().includes(locale)) || defaultLocale);
   });
 
   if (i18n.isInitialized) {
-    i18n.changeLanguage("en");
+    i18n.changeLanguage(locales.find(locale => app.getLocale().includes(locale)) || defaultLocale);
     i18n.off("loaded");
   }
 });
