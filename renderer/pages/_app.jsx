@@ -1,8 +1,9 @@
-import { I18nextProvider } from "react-i18next";
+import { I18nextProvider, initReactI18next } from "react-i18next";
 import { useEffect, useRef } from "react";
 
 import Loader from "../components/Loader";
 import useToggle from "../lib/hooks/useToggle";
+import { defaultLocale, locales } from  "../../main/i18n.config"
 import "../styles/tailwind.css";
 
 function MyApp({ Component, pageProps }) {
@@ -11,6 +12,26 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (process.browser) {
       const i18n = window.i18n;
+      const i18nextOptions = {
+        interpolation: {
+          escapeValue: false,
+        },
+        saveMissing: true,
+        lng: "en",
+        fallbackLng: defaultLocale,
+        whitelist: locales,
+        react: {
+          useSuspense: false,
+        },
+      };
+      
+      i18n.use(initReactI18next);
+      
+      // initialize if not already initialized
+      if (!i18n.isInitialized) {
+        i18n.init(i18nextOptions);
+      }
+      
       window.ipcRenderer.on("language-changed", (event, message) => {
         i18n.addResourceBundle(
           message.language,
