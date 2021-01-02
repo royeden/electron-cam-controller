@@ -4,25 +4,38 @@ const { format } = require("url");
 const OSC = require("osc-js");
 
 // Packages
-const { BrowserWindow, app, ipcMain } = require("electron");
+const { BrowserWindow, app, ipcMain, shell } = require("electron");
 const isDev = require("electron-is-dev");
 const prepareNext = require("electron-next");
+
+// OSC
 const OSC_EVENTS = require("./events/osc");
+
+const i18n = require("./i18n");
+const menuFactoryService = require("./services/menuFactory");
+
+const {
+  default: installExtension,
+  REACT_DEVELOPER_TOOLS,
+} = require("electron-devtools-installer");
 
 // Prepare the renderer once the app is ready
 app.on("ready", async () => {
-  await prepareNext("./renderer");
-
-  const mainWindow = new BrowserWindow({
-    width: 800,
+  console.log("locale", app.getLocale());
+  mainWindow = new BrowserWindow({
+    width: 960,
     height: 600,
     webPreferences: {
       nodeIntegration: false,
       preload: join(__dirname, "preload.js"),
-      // devTools: isDev,
+      devTools: isDev,
       backgroundColor: "#000",
     },
   });
+
+  mainWindow.setMenu(null);
+
+  await prepareNext("./renderer");
 
   const url = isDev
     ? "http://localhost:8000"
@@ -33,6 +46,38 @@ app.on("ready", async () => {
       });
 
   mainWindow.loadURL(url);
+
+  if (isDev) {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+    // Install extensions
+    installExtension(REACT_DEVELOPER_TOOLS)
+      .then((name) => console.log(`Added Extension:  ${name}`))
+      .catch((err) => console.log("An error occurred: ", err));
+  }
+
+  i18n.on("loaded", (loaded) => {
+    i18n.changeLanguage("en");
+    i18n.off("loaded");
+  });
+
+  i18n.on("languageChanged", (lng) => {
+    menuFactoryService.buildMenu(app, mainWindow, shell, i18n, isDev);
+    mainWindow.webContents.send("language-changed", {
+      language: lng,
+      namespace: "translation",
+      resource: i18n.getResourceBundle(lng, "translation"),
+    });
+  });
+
+  ipcMain.on("get-initial-language", (event, arg) => {
+    i18n.changeLanguage("en");
+  });
+
+  if (i18n.isInitialized) {
+    i18n.changeLanguage("en");
+    i18n.off("loaded");
+  }
 });
 
 // Quit the app once all windows are closed
@@ -51,7 +96,7 @@ ipcMain.on(OSC_EVENTS.send, (event, route, ...messages) => {
       client.send(new OSC.Message(route, ...messages));
       event.reply(OSC_EVENTS.sent, `${route}: ${messages}`);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 });

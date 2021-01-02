@@ -23,7 +23,7 @@ Las funcionalidades incluídas son las siguientes (dependen todas de la cámara 
 
 * Windows (próximamente).
 
-\* Mac no va a poder ser soportado por este proyecto, si estás usando Mac y vas a querer correr este proyecto, podes ver la sección de [cómo desarrollar localmente](#como-desarrollar-localmente) más abajo.
+\* Mac no va a ser soportado por este proyecto, si estás usando Mac y vas a querer correr este proyecto, podes ver la sección de [cómo desarrollar localmente](#como-desarrollar-localmente) más abajo. De paso, podes leer [este post](http://www.nathalielawhead.com/candybox/the-future-of-my-games-on-apple-post-catalina-and-what-this-means-for-art-games-in-general) (en inglés) sobre como se maneja Apple con sus políticas de aplicaciones (que solo pueden ser armadas en máquinas de Apple).
 
 ## Tecnologías que lo hacen funcionar y guías que sirvieron para su construcción:
 

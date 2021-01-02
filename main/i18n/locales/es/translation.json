@@ -1,0 +1,93 @@
+{
+  "menu": {
+    "app": {
+      "quit": "Salir"
+    },
+    "view": {
+      "title": "Ver",
+      "reload": "Recargar",
+      "fullscreen": "Pantalla completa",
+      "minimize": "Minimizar"
+    },
+    "help": {
+      "title": "Ayuda",
+      "about": "Sobre OSC Cam",
+      "examples": "Ejemplos"
+    },
+    "language": {
+      "title": "Idioma",
+      "en": "Inglés",
+      "es": "Español"
+    },
+    "development": {
+      "inspector": "Alternar inspector"
+    }
+  },
+  "camera": {
+    "controls": {
+      "skeleton": {
+        "toggle": "{{ status }} tracking",
+        "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
+        "status": {
+          "on": "Encender",
+          "off": "Apagar"
+        }
+      },
+      "tracking": {
+        "toggle": "{{ status }} esqueleto",
+        "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
+        "status": {
+          "on": "Mostrar",
+          "off": "Ocultar"
+        }
+      },
+      "camera": {
+        "notice": "Esta apliacación utiliza la cámara web, por favor, enciende tu cámara web",
+        "turnOn": "¡Encender la cámara!"
+      },
+      "osc": {
+        "name": "Número de puerto OSC",
+        "setter": "Cambiar puerto OSC"
+      }
+    },
+    "rgb": {
+      "description": "El valor rgb que surge del promedio de la suma de los colores de cada pixel de la imagen, siendo el mínimo la ausencia absoluta de ese color y el máximo la completa presencia de ese color en todos los píxeles de la imagen. Se accede a estos valores a través de la ruta /rgb.",
+      "map": {
+        "max": "Valor máximo para rgb",
+        "min": "Valor mínimo para rgb"
+      }
+    },
+    "score": {
+      "description": "La puntuación de las partes del cuerpo indica cuanta seguridad tiene la inteligencia artificial que trackea el cuerpo de que esa parte del cuerpo está presente en la imagen. Se acceden a estos valores a través de las rutas /parteDelCuerpo/score (por parte del cuerpo) o /score (general)",
+      "map": {
+        "max": "Valor máximo para la puntuación de certeza de la presencia de una parte del cuerpo",
+        "min": "Valor mínimo para la puntuación de certeza de la presencia de una parte del cuerpo"
+      }
+    },
+    "parts": {
+      "description": "Los valores de trackeo del cuerpo van de izquierda a derecha y de arriba hacia abajo. Se acceden a estos valores a través de las rutas /parteDelCuerpo/x o /parteDelCuerpo/y",
+      "map": {
+        "max": "Valor máximo para el tracking del cuerpo",
+        "min": "Valor mínimo para el tracking del cuerpo"
+      }
+    },
+    "client": {
+      "name": "Estado del cliente de OSC",
+      "status": {
+        "active": "¡Activo! Enviando datos al puerto {{ port }}",
+        "inactive": "Apagado. Esto puede tratarse de un error, intenta cambiar de puerto :("
+      }
+    },
+    "model": {
+      "name": "Modelo",
+      "skeleton": "Esqueleto",
+      "tracking": "Tracking",
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "loaded": "Cargado",
+        "loading": "Cargando"
+      }
+    }
+  }
+}

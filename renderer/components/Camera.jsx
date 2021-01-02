@@ -1,17 +1,18 @@
 // THX <3 <3 <3
 // https://medium.com/@kirstenlindsmith/translating-posenet-into-react-js-58f438c8605d
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as poseNet from "@tensorflow-models/posenet";
 import "@tensorflow/tfjs-backend-webgl";
 
-import { drawKeyPoints, drawSkeleton } from "../utils/posenet";
+import OSC_EVENTS from "../../main/events/osc";
 import useAnimationFrame from "../lib/hooks/useAnimationFrame";
+import useToggle from "../lib/hooks/useToggle";
+import { drawKeyPoints, drawSkeleton } from "../utils/posenet";
+import { map } from "../utils/p5";
+import tailwind from "../../tailwind.config";
 
 import Button from "./Button";
-import useToggle from "../lib/hooks/useToggle";
-import { map } from "../utils/p5";
-import OSC_EVENTS from "../../main/events/osc";
+import { useTranslation } from "react-i18next";
 
 const VIDEO = {
   height: 480,
@@ -23,6 +24,7 @@ const skeletonLineWidth = 5;
 const defaultPort = 3333;
 
 export default function Camera() {
+  const { t } = useTranslation();
   const posenet = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -213,12 +215,17 @@ export default function Camera() {
           drawCamera();
 
           if (modelSkeleton) {
-            drawKeyPoints(keypoints, minScore, "#f00", canvasContext);
+            drawKeyPoints(
+              keypoints,
+              minScore,
+              tailwind.theme.extend.colors.pallete.complimentary,
+              canvasContext
+            );
 
             drawSkeleton(
               keypoints,
               minScore,
-              "#f00",
+              tailwind.theme.extend.colors.pallete.complimentary,
               skeletonLineWidth,
               canvasContext
             );
@@ -247,26 +254,55 @@ export default function Camera() {
     <>
       <video className="hidden" playsInline ref={videoRef} />
       <canvas className="max-w-full" ref={canvasRef} />
-      <div className="flex flex-col space-between">
-        <div>
+      <div className="flex flex-col w-full max-w-screen-md ">
+        <div className="flex flex-col items-center my-4">
           {cameraOn ? (
-            <>
-              <Button onClick={toggleModelActive}>
-                Turn tracking {modelActive ? "off" : "on"}
+            <div className="flex justify-between w-full">
+              <Button
+                disabled={!modelLoaded}
+                title={
+                  modelLoaded
+                    ? t("camera.controls.tracking.toggle")
+                    : t("camera.controls.tracking.modelLoading")
+                }
+                onClick={toggleModelActive}
+              >
+                {t("camera.controls.tracking.toggle", {
+                  status: modelActive
+                    ? t("camera.controls.tracking.status.off")
+                    : t("camera.controls.tracking.status.on"),
+                })}
               </Button>
-              <Button onClick={toggleModelSkeleton}>
-                Turn skeleton {modelSkeleton ? "off" : "on"}
+              <Button
+                disabled={!modelLoaded}
+                title={
+                  modelLoaded
+                    ? t("camera.controls.skeleton.toggle")
+                    : t("camera.controls.skeleton.modelLoading")
+                }
+                onClick={toggleModelSkeleton}
+              >
+                {t("camera.controls.skeleton.toggle", {
+                  status: modelSkeleton
+                    ? t("camera.controls.skeleton.status.off")
+                    : t("camera.controls.skeleton.status.on"),
+                })}
+              </Button>
+            </div>
+          ) : (
+            <>
+              <p className="mb-4">{t("camera.controls.camera.notice")}</p>
+              <Button onClick={toggleCameraOn}>
+                {t("camera.controls.camera.turnOn")}
               </Button>
             </>
-          ) : (
-            <Button onClick={toggleCameraOn}>Turn camera on!</Button>
           )}
         </div>
-        <div>
+        {/* <div className="flex justify-between w-full">
           <label className="cursor-pointer" htmlFor="min-score">
             Min tracking score:
           </label>
-          <div>
+          <div className="flex justify-between">
             <input
               id="min-score"
               min="0.1"
@@ -278,32 +314,37 @@ export default function Camera() {
             />
             <span>{Math.floor(minScore * 100)}%</span>
           </div>
-        </div>
-        <div>
+        </div> */}
+        <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="osc-port">
-            OSC port:
+            {t("camera.controls.osc.name")}:
           </label>
-          <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
-            id="osc-port"
-            min="1000"
-            max="9999"
-            onKeyDown={(event) => {
-              if (event.key === "Enter") createClient();
-            }}
-            onChange={(event) => setOscPort(event.target.value)}
-            step="1"
-            type="number"
-            value={oscPort}
-          />
-          <Button onClick={createClient}>Set port</Button>
+          <div className="flex justify-between">
+            <input
+              className="w-32 p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+              id="osc-port"
+              min="1000"
+              max="9999"
+              onKeyDown={(event) => {
+                if (event.key === "Enter") createClient();
+              }}
+              onChange={(event) => setOscPort(event.target.value)}
+              step="1"
+              type="number"
+              value={oscPort}
+            />
+            <Button onClick={createClient}>
+              {t("camera.controls.osc.setter")}
+            </Button>
+          </div>
         </div>
-        <div>
+        <p>{t("camera.rgb.description")}</p>
+        <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="min-rgb">
-            RGB map min:
+            {t("camera.score.map.min")}:
           </label>
           <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
             id="min-rgb"
             onChange={(event) => setMinMapRGB(event.target.value)}
             step="1"
@@ -311,12 +352,12 @@ export default function Camera() {
             value={minMapRGB}
           />
         </div>
-        <div>
+        <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="max-rgb">
-            RGB map max:
+            {t("camera.score.map.max")}:
           </label>
           <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
             id="max-rgb"
             onChange={(event) => setMaxMapRGB(event.target.value)}
             step="1"
@@ -324,12 +365,13 @@ export default function Camera() {
             value={maxMapRGB}
           />
         </div>
-        <div>
+        <p>{t("camera.score.description")}</p>
+        <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="min-score">
-            Score map min:
+            {t("camera.score.map.min")}:
           </label>
           <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
             id="min-score"
             onChange={(event) => setMinMapScore(event.target.value)}
             step="1"
@@ -337,12 +379,12 @@ export default function Camera() {
             value={minMapScore}
           />
         </div>
-        <div>
+        <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="max-score">
-            Score map max:
+            {t("camera.score.map.max")}:
           </label>
           <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
             id="max-score"
             onChange={(event) => setMaxMapScore(event.target.value)}
             step="1"
@@ -350,12 +392,13 @@ export default function Camera() {
             value={maxMapScore}
           />
         </div>
-        <div>
+        <p>{t("camera.parts.description")}</p>
+        <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="min-parts">
-            Parts map min:
+            {t("camera.parts.map.min")}:
           </label>
           <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
             id="min-parts"
             onChange={(event) => setMinMapParts(event.target.value)}
             step="1"
@@ -363,12 +406,12 @@ export default function Camera() {
             value={minMapParts}
           />
         </div>
-        <div>
+        <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="max-parts">
-            Parts map max:
+            {t("camera.parts.map.max")}:
           </label>
           <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
+            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
             id="max-parts"
             onChange={(event) => setMaxMapParts(event.target.value)}
             step="1"
@@ -377,12 +420,29 @@ export default function Camera() {
           />
         </div>
         <span>
-          Client listening:{" "}
-          {oscLoaded ? `Yes! Sending data to port ${oscPortValue}` : "Nope :("}
+          {t("camera.client.name")}:{" "}
+          {oscLoaded
+            ? t("camera.client.status.active", { port: oscPortValue })
+            : t("camera.client.status.inactive")}
         </span>
-        <span>Tracking: {modelActive ? "Active!" : "Off"}</span>
-        <span>Skeleton: {modelSkeleton ? "Active!" : "Off"}</span>
-        <span>Model: {modelLoaded ? "Loaded!" : "Loading..."}</span>
+        <span>
+          {t("camera.model.tracking")}:{" "}
+          {modelActive
+            ? `${t("camera.model.status.active")}!`
+            : `${t("camera.model.status.inactive")}`}
+        </span>
+        <span>
+          {t("camera.model.skeleton")}:{" "}
+          {modelSkeleton
+            ? `${t("camera.model.status.active")}!`
+            : `${t("camera.model.status.inactive")}`}
+        </span>
+        <span>
+          {t("camera.model.name")}:{" "}
+          {modelLoaded
+            ? `${t("camera.model.status.loaded")}!`
+            : `${t("camera.model.status.loading")}...`}
+        </span>
       </div>
     </>
   );

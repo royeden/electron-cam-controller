@@ -1,7 +1,10 @@
 module.exports = {
-  purge: [
-    './renderer/**/*.jsx',
-  ],
+  purge: {
+    content: ["./renderer/**/*.jsx"],
+    options: {
+      safelist: ["cssload-dots", "cssload-dot"],
+    },
+  },
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
@@ -45,12 +48,13 @@ module.exports = {
         },
       },
       boxShadow: {
-        "light-md": "0 4px 6px -1px rgba(30, 30, 30, 0.1), 0 2px 4px -1px rgba(30, 30, 30, 0.06)" 
-      }
+        "light-md":
+          "0 4px 6px -1px rgba(30, 30, 30, 0.1), 0 2px 4px -1px rgba(30, 30, 30, 0.06)",
+      },
     },
   },
   variants: {
     extend: {},
   },
   plugins: [],
-}
+};

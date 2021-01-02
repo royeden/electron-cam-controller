@@ -1,0 +1,93 @@
+{
+  "menu": {
+    "app": {
+      "quit": "Quit"
+    },
+    "view": {
+      "title": "View",
+      "reload": "Reload",
+      "fullscreen": "Fullscreen",
+      "minimize": "Minimize"
+    },
+    "help": {
+      "title": "Help",
+      "about": "About OSC Cam",
+      "examples": "Examples"
+    },
+    "language": {
+      "title": "Language",
+      "en": "English",
+      "es": "Spanish"
+    },
+    "development": {
+      "inspector": "Toggle inspector"
+    }
+  },
+  "camera": {
+    "controls": {
+      "skeleton": {
+        "toggle": "Turn tracking {{ status }}",
+        "modelLoading": "Please wait for the model to load...",
+        "status": {
+          "on": "on",
+          "off": "off"
+        }
+      },
+      "tracking": {
+        "toggle": "Turn skeleton {{ status }}",
+        "modelLoading": "Please wait for the model to load...",
+        "status": {
+          "on": "on",
+          "off": "off"
+        }
+      },
+      "camera": {
+        "notice": "This application requires the use of the camera, please turn on your camera",
+        "turnOn": "Turn camera on!"
+      },
+      "osc": {
+        "name": "OSC port number",
+        "setter": "Set OSC port"
+      }
+    },
+    "rgb": {
+      "description": "The rgb value that originates from the average of the sum of all color values from the image pixels. The minimum indicates the absence of that color space, whilst the maximum indicates the full presence of that color space in all pixels. You can access these values from the route /rgb",
+      "map": {
+        "max": "Max for rgb value",
+        "min": "Min for rgb value"
+      }
+    },
+    "score": {
+      "description": "Score indicates the accuracy from the prediction of the AI tracking if your body part is present in the image. You can access these values from the routes /bodyPart/score (for each body part) or /score (for the general presence of a body).",
+      "map": {
+        "max": "Max score for the accuracy prediction of the presence of a body part",
+        "min": "Min score for the accuracy prediction of the presence of a body part"
+      }
+    },
+    "parts": {
+      "description": "Body part tracking values go from left to right and from top to bottom. You can access these values from the routes /bodyPart/x o /bodyPart/y",
+      "map": {
+        "max": "Max value for body part tracking",
+        "min": "Min value for body part tracking"
+      }
+    },
+    "client": {
+      "name": "OSC Client Status",
+      "status": {
+        "active": "Active! Sending data to port {{ port }}",
+        "inactive": "Off. This could be an error, try switching ports :("
+      }
+    },
+    "model": {
+      "name": "Model",
+      "skeleton": "Skeleton",
+      "tracking": "Tracking",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "loaded": "Loaded",
+        "loading": "Loading"
+      }
+    }
+  }
+}

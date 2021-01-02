@@ -6,7 +6,7 @@
   },
   "productName": "electron-osc-cam",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "main/index.js",
   "scripts": {
     "tailwind": "tailwindcss-cli build -o renderer/styles/tailwind.css",
@@ -20,7 +20,6 @@
   },
   "build": {
     "productName": "electron-osc-cam",
-    "asar": true,
     "files": [
       "main",
       "renderer/out"
@@ -43,17 +42,21 @@
     "electron-builder": "^21.2.0",
     "next": "latest",
     "postcss": "^8.2.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "tailwindcss": "^2.0.2",
     "tailwindcss-cli": "^0.1.2"
   },
   "dependencies": {
     "@tensorflow-models/posenet": "^2.2.1",
     "@tensorflow/tfjs": "^2.8.1",
+    "electron-devtools-installer": "^3.1.1",
     "electron-is-dev": "^1.1.0",
     "electron-next": "^3.1.5",
-    "osc-js": "^2.1.0"
+    "i18next": "^19.8.4",
+    "i18next-node-fs-backend": "^2.1.3",
+    "osc-js": "^2.1.0",
+    "react-i18next": "^11.8.4"
   },
   "license": "MIT"
 }
