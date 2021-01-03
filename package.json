@@ -10,18 +10,13 @@
   "main": "main/index.js",
   "scripts": {
     "tailwind": "tailwindcss-cli build -o renderer/styles/tailwind.css",
-    "tailwind-prod-windows": "SET NODE_ENV=production tailwindcss-cli build -o renderer/styles/tailwind.css",
-    "tailwind-prod": "NODE_ENV=production tailwindcss-cli build -o renderer/styles/tailwind.css",
+    "tailwind-prod": "cross-env NODE_ENV=production tailwindcss-cli build -o renderer/styles/tailwind.css",
     "clean": "rimraf dist renderer/.next renderer/out",
     "dev": "npm run tailwind && electron .",
     "start": "npm run tailwind-prod && electron .",
     "build": "npm run tailwind-prod && next build renderer && next export renderer",
     "pack-app": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder",
-    "start-windows": "npm run tailwind-prod-windows && electron .",
-    "build-windows": "npm run tailwind-prod-windows && next build renderer && next export renderer",
-    "pack-app-windows": "npm run build-windows && electron-builder --dir",
-    "dist-windows": "npm run build-windows && electron-builder"
+    "dist": "npm run build && electron-builder"
   },
   "build": {
     "productName": "electron-osc-cam",
@@ -43,6 +38,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.1.0",
+    "cross-env": "^7.0.3",
     "electron": "^7.1.7",
     "electron-builder": "^21.2.0",
     "next": "latest",
