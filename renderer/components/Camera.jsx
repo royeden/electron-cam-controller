@@ -1,23 +1,20 @@
 // THX <3 <3 <3
 // https://medium.com/@kirstenlindsmith/translating-posenet-into-react-js-58f438c8605d
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import * as poseNet from "@tensorflow-models/posenet";
 import "@tensorflow/tfjs-backend-webgl";
+import { useTranslation } from "react-i18next";
 
 import OSC_EVENTS from "../../main/events/osc";
 import useAnimationFrame from "../lib/hooks/useAnimationFrame";
+import tailwind from "../../tailwind.config";
 import useToggle from "../lib/hooks/useToggle";
+import { VIDEO } from "../constants/video";
 import { drawKeyPoints, drawSkeleton } from "../utils/posenet";
 import { map } from "../utils/p5";
-import tailwind from "../../tailwind.config";
 
 import Button from "./Button";
-import { useTranslation } from "react-i18next";
-
-const VIDEO = {
-  height: 480,
-  width: 640,
-};
+import { BodyPartsContext } from "../context/BodyPartsContext";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
@@ -25,6 +22,7 @@ const defaultPort = 3333;
 
 export default function Camera() {
   const { t } = useTranslation();
+  const { bodyParts } = useContext(BodyPartsContext);
   const posenet = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -55,8 +53,8 @@ export default function Camera() {
   );
 
   const createClient = useCallback(() => {
-    const port = parseInt(oscPort, 10);
-    if (isNaN(port) || port < 1000 || port > 9999) setOscPort(oscPortValue);
+    const port = Math.floor(parseInt(oscPort, 10));
+    if (isNaN(port) || port > 65535 || port < 1024) setOscPort(oscPortValue);
     else if (process.browser) {
       overrideOscLoaded(false);
       window.ipcRenderer.send(OSC_EVENTS.create, port);
@@ -69,7 +67,7 @@ export default function Camera() {
 
   useEffect(() => {
     if (process.browser) {
-      window.ipcRenderer.on(OSC_EVENTS.sent, console.log);
+      // window.ipcRenderer.on(OSC_EVENTS.sent, console.log);
     }
     createClient();
   }, []);
@@ -196,19 +194,35 @@ export default function Camera() {
           sendOSCMessage("/score", map(score, 0, 1, minMapScore, maxMapScore));
           keypoints.forEach(
             ({ part, score: partScore, position: { x, y } }) => {
-              // TODO map values
-              sendOSCMessage(
-                `/${part}/score`,
-                map(partScore, 0, 1, minMapScore, maxMapScore)
-              );
-              sendOSCMessage(
-                `/${part}/x`,
-                map(x, 0, VIDEO.width, minMapParts, maxMapParts, true)
-              );
-              sendOSCMessage(
-                `/${part}/y`,
-                map(y, 0, VIDEO.height, minMapParts, maxMapParts, true)
-              );
+              if (part === "leftWrist" || part === "rightWrist") {
+                const { routes } = bodyParts[part];
+                routes.forEach(route => {
+                  if (route.x.enabled) sendOSCMessage(
+                    `/${route.x.route}`,
+                    route.x.message(x)
+                  );
+                  if (route.y.enabled) sendOSCMessage(
+                    `/${route.y.route}`,
+                    route.y.message(y)
+                  );
+                  if (route.score.enabled) sendOSCMessage(
+                    `/${route.score.route}`,
+                    route.score.message(partScore)
+                  );
+                })
+              }
+              // sendOSCMessage(
+              //   `/${part}/score`,
+              //   map(partScore, 0, 1, minMapScore, maxMapScore, true)
+              // );
+              // sendOSCMessage(
+              //   `/${part}/x`,
+              //   map(x, 0, VIDEO.width, minMapParts, maxMapParts, true)
+              // );
+              // sendOSCMessage(
+              //   `/${part}/y`,
+              //   map(y, 0, VIDEO.height, minMapParts, maxMapParts, true)
+              // );
             }
           );
           canvasContext.clearRect(0, 0, VIDEO.width, VIDEO.height);
@@ -237,6 +251,7 @@ export default function Camera() {
       }
     }
   }, [
+    bodyParts,
     cameraOn,
     maxMapParts,
     maxMapRGB,
@@ -251,7 +266,7 @@ export default function Camera() {
   ]);
 
   return (
-    <>
+    <div>
       <video className="hidden" playsInline ref={videoRef} />
       <canvas className="max-w-full" ref={canvasRef} />
       <div className="flex flex-col w-full max-w-screen-md ">
@@ -323,8 +338,8 @@ export default function Camera() {
             <input
               className="w-32 p-2 transition-colors duration-300 ease-in-out border-2 rounded-md hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
               id="osc-port"
-              min="1000"
-              max="9999"
+              min="1023"
+              max="65535"
               onKeyDown={(event) => {
                 if (event.key === "Enter") createClient();
               }}
@@ -341,7 +356,7 @@ export default function Camera() {
         <p>{t("camera.rgb.description")}</p>
         <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="min-rgb">
-            {t("camera.score.map.min")}:
+            {t("camera.rgb.map.min")}:
           </label>
           <input
             className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
@@ -354,7 +369,7 @@ export default function Camera() {
         </div>
         <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="max-rgb">
-            {t("camera.score.map.max")}:
+            {t("camera.rgb.map.max")}:
           </label>
           <input
             className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
@@ -365,7 +380,7 @@ export default function Camera() {
             value={maxMapRGB}
           />
         </div>
-        <p>{t("camera.score.description")}</p>
+        {/* <p>{t("camera.score.description")}</p>
         <div className="flex items-center justify-between w-full my-4">
           <label className="cursor-pointer" htmlFor="min-score">
             {t("camera.score.map.min")}:
@@ -418,7 +433,7 @@ export default function Camera() {
             type="number"
             value={maxMapParts}
           />
-        </div>
+        </div> */}
         <span>
           {t("camera.client.name")}:{" "}
           {oscLoaded
@@ -444,6 +459,6 @@ export default function Camera() {
             : `${t("camera.model.status.loading")}...`}
         </span>
       </div>
-    </>
+    </div>
   );
 }

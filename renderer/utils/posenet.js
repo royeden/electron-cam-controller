@@ -1,12 +1,12 @@
 // THX <3 <3 <3
 // https://github.com/tensorflow/tfjs-models/blob/master/posenet/demos/demo_util.js
 
-import * as posenet from '@tensorflow-models/posenet'
+import * as posenet from "@tensorflow-models/posenet";
 
-const pointRadius = 3
+const pointRadius = 12;
 
-function toTuple({x, y}) {
-  return [x, y]
+function toTuple({ x, y }) {
+  return [x, y];
 }
 
 export function drawKeyPoints(
@@ -16,15 +16,15 @@ export function drawKeyPoints(
   canvasContext,
   scale = 1
 ) {
-  keypoints.forEach(keypoint => {
+  keypoints.forEach((keypoint) => {
     if (keypoint.score >= minConfidence) {
-      const {x, y} = keypoint.position
-      canvasContext.beginPath()
-      canvasContext.arc(x * scale, y * scale, pointRadius, 0, 2 * Math.PI)
-      canvasContext.fillStyle = skeletonColor
-      canvasContext.fill()
+      const { x, y } = keypoint.position;
+      canvasContext.beginPath();
+      canvasContext.arc(x * scale, y * scale, pointRadius, 0, 2 * Math.PI);
+      canvasContext.fillStyle = skeletonColor;
+      canvasContext.fill();
     }
-  })
+  });
 }
 
 function drawSegment(
@@ -35,12 +35,12 @@ function drawSegment(
   scale,
   canvasContext
 ) {
-  canvasContext.beginPath()
-  canvasContext.moveTo(firstX * scale, firstY * scale)
-  canvasContext.lineTo(nextX * scale, nextY * scale)
-  canvasContext.lineWidth = lineWidth
-  canvasContext.strokeStyle = color
-  canvasContext.stroke()
+  canvasContext.beginPath();
+  canvasContext.moveTo(firstX * scale, firstY * scale);
+  canvasContext.lineTo(nextX * scale, nextY * scale);
+  canvasContext.lineWidth = lineWidth;
+  canvasContext.strokeStyle = color;
+  canvasContext.stroke();
 }
 
 export function drawSkeleton(
@@ -54,9 +54,9 @@ export function drawSkeleton(
   const adjacentKeyPoints = posenet.getAdjacentKeyPoints(
     keypoints,
     minConfidence
-  )
+  );
 
-  adjacentKeyPoints.forEach(keypoints => {
+  adjacentKeyPoints.forEach((keypoints) => {
     drawSegment(
       toTuple(keypoints[0].position),
       toTuple(keypoints[1].position),
@@ -64,6 +64,6 @@ export function drawSkeleton(
       lineWidth,
       scale,
       canvasContext
-    )
-  })
+    );
+  });
 }

@@ -14,3 +14,7 @@ export function curry(fn, arity = fn.length) {
     };
   })([]);
 }
+
+export function idempotence(value) {
+  return value;
+}

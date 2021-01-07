@@ -23,10 +23,29 @@
       "inspector": "Alternar inspector"
     }
   },
+  "bodyParts": {
+    "nose": "Nariz",
+    "leftEye": "Ojo izquierdo",
+    "rightEye": "Ojo derecho",
+    "leftEar": "Oreja izquierda",
+    "rightEar": "Oreja derecha",
+    "leftShoulder": "Hombro izquierdo",
+    "rightShoulder": "Hombro derecho",
+    "leftElbow": "Codo izquierdo",
+    "rightElbow": "Codo derecho",
+    "leftWrist": "Muñeca izquierda",
+    "rightWrist": "Muñeca derecha",
+    "leftHip": "Cadera izquierda",
+    "rightHip": "Cadera derecha",
+    "leftKnee": "Rodilla izquierda",
+    "rightKnee": "Rodilla derecha",
+    "leftAnkle": "Tobillo izquierdo",
+    "rightAnkle": "Tobillo derecho"
+  },
   "camera": {
     "controls": {
       "skeleton": {
-        "toggle": "{{ status }} tracking",
+        "toggle": "{{ status }} esqueleto",
         "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
         "status": {
           "on": "Encender",
@@ -34,7 +53,7 @@
         }
       },
       "tracking": {
-        "toggle": "{{ status }} esqueleto",
+        "toggle": "{{ status }} tracking",
         "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
         "status": {
           "on": "Mostrar",

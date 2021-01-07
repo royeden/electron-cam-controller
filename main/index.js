@@ -102,7 +102,7 @@ ipcMain.on(OSC_EVENTS.send, (event, route, ...messages) => {
 });
 
 ipcMain.on(OSC_EVENTS.create, (event, port = 3333) => {
-  if (typeof port === "number" && port > 999 && port < 10000) {
+  if (typeof port === "number" && port > 1023 && port < 65536) {
     if (client) {
       client.close();
       delete client;

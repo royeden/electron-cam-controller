@@ -23,10 +23,29 @@
       "inspector": "Toggle inspector"
     }
   },
+  "bodyParts": {
+    "nose": "Nose",
+    "leftEye": "Left Eye",
+    "rightEye": "Right Eye",
+    "leftEar": "Left Ear",
+    "rightEar": "Right Ear",
+    "leftShoulder": "Left Shoulder",
+    "rightShoulder": "Right Shoulder",
+    "leftElbow": "Left Elbow",
+    "rightElbow": "Right Elbow",
+    "leftWrist": "Left Wrist",
+    "rightWrist": "Right Wrist",
+    "leftHip": "Left Hip",
+    "rightHip": "Right Hip",
+    "leftKnee": "Left Knee",
+    "rightKnee": "Right Knee",
+    "leftAnkle": "Left Ankle",
+    "rightAnkle": "Right Ankle"
+  },
   "camera": {
     "controls": {
       "skeleton": {
-        "toggle": "Turn tracking {{ status }}",
+        "toggle": "Turn skeleton {{ status }}",
         "modelLoading": "Please wait for the model to load...",
         "status": {
           "on": "on",
@@ -34,7 +53,7 @@
         }
       },
       "tracking": {
-        "toggle": "Turn skeleton {{ status }}",
+        "toggle": "Turn tracking {{ status }}",
         "modelLoading": "Please wait for the model to load...",
         "status": {
           "on": "on",
