@@ -6,7 +6,7 @@
   },
   "productName": "electron-osc-cam",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "main/index.js",
   "scripts": {
     "generate-css-types": "tailwindcss-classnames --config tailwind.config.js",
@@ -46,6 +46,7 @@
     "postcss": "^8.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "tailwind-scrollbar": "^1.1.2",
     "tailwindcss": "^2.0.2",
     "tailwindcss-cli": "^0.1.2"
   },

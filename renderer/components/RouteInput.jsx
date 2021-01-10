@@ -1,20 +1,18 @@
 import Tippy from "@tippyjs/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { classnames } from "tailwindcss-classnames";
-import useObjectState from "../lib/hooks/useObjectState";
-import { objectMap } from "../utils/object";
-import Button from "./Button";
+import {
+  insertArrayValue,
+  modifyArrayValue,
+  removeArrayValue,
+} from "../utils/array";
+import { curry } from "../utils/fp";
 
 import Icon from "./Icon";
 import Input from "./Input";
 
-const buttonInteractions = classnames(
-  "hover:border-light",
-  "focus:border-light",
-  "hover:text-light",
-  "focus:text-light"
-);
+const buttonInteractions = classnames("hover:border-light", "hover:text-light");
 
 const buttonClass = classnames(
   "p-1",
@@ -25,81 +23,60 @@ const buttonClass = classnames(
   "rounded-full",
   "border-light-medium",
   "text-light-medium",
-  "outline-none"
+  "outline-none",
+  "focus:border-light",
+  "focus:outline-none",
+  "focus:text-light"
 );
 
-// TODO move this state up into a form and add save logic
 export default function RouteInput({
-  label = "",
-  mapper,
-  part = "",
   onChange,
   route = "",
+  routeKey = "",
+  routes = [],
+  to = {},
 }) {
-  // const { t } = useTranslation();
-  const [internalMapper, , mergeInternalMapper] = useObjectState(
-    objectMap(mapper, String)
-  );
-  const [subroutes, setSubroutes] = useState(route.split("/"));
+  const { t } = useTranslation();
 
-  const valid =
-    subroutes.every(Boolean) && Object.values(internalMapper).every(Boolean);
-
-  const submit = () => {
-    if (valid)
-      onChange({
-        route: subroutes.join("/"),
-        to: objectMap(internalMapper, Number),
-      });
-  }
-
-  const handleAddRoute = useCallback(
-    (index) => () =>
-      setSubroutes((prevState) => {
-        const newState = [...prevState];
-        newState.splice(index + 1, 0, "");
-        return newState;
-      }),
-    []
+  const valid = useMemo(
+    () => routes.every(Boolean) && Object.values(to).every(Boolean),
+    [routes, to]
   );
 
-  const handleChangeRoute = useCallback(
-    (index) => (event) =>
-      setSubroutes((prevState) =>
-        Object.assign([], prevState, { [index]: event.target.value })
-      ),
-    []
-  );
-  const handleChangeMapper = useCallback(
-    (key) => (event) => mergeInternalMapper({ [key]: event.target.value }),
-    []
-  );
-
-  const handleDeleteRoute = useCallback(
-    (index) => () =>
-      setSubroutes((prevState) => prevState.filter((_, i) => i !== index)),
-    []
-  );
+  const handleAddRoute = useCallback((index) =>
+    onChange({ route: insertArrayValue(routes, index + 1, "") }), [routes])
+  
+  const handleChangeRoute = useCallback(curry(function changeRoute(index, event) {
+    onChange({ route: modifyArrayValue(routes, index, event.target.value) })
+  }), [routes]);
+  
+  const handleDeleteRoute = useCallback((index) =>
+  onChange({ route: removeArrayValue(routes, index) }), [routes])
+  
+  const handleChangeMapper = useCallback(curry(function changeMapper(key, event) {
+    onChange({ to: { [key]: event.target.value} })
+  }), [routes]);
 
   return (
     <>
-      <h3>{label}</h3>
+      <h3>{route.toUpperCase()}</h3>
       <div className="flex items-center w-full">
-        {subroutes.map((subroute, index) => (
-          <div key={`subroute-${label.toLowerCase()}-${part}-${index}`}>
+        {routes.map((subroute, index) => (
+          <div key={`${routeKey}-${route}-subroute-${index}`}>
             <span>/</span>
             {index > 0 && (
               <Tippy
                 animation="shift-away"
                 arrow
-                content="Delete subroute"
+                content={t("bodyControls.subroute.delete")}
                 placement="top"
               >
                 <button
-                  aria-label="Delete subroute"
+                  aria-label={t("bodyControls.subroute.delete")}
                   className={classnames(buttonClass, buttonInteractions)}
-                  onClick={handleDeleteRoute(index)}
-                  title="Delete subroute"
+                  onClick={() => handleDeleteRoute(index)}
+                  title={t("bodyControls.subroute.delete")}
+                  type="button"
                 >
                   <Icon type="close" />
                 </button>
@@ -113,18 +90,19 @@ export default function RouteInput({
             <Tippy
               animation="shift-away"
               arrow
-              content="Add subroute"
+              content={t("bodyControls.subroute.add")}
               placement="top"
             >
               <button
-                aria-label="Add subroute"
+                aria-label={t("bodyControls.subroute.add")}
                 className={classnames(buttonClass, {
                   "cursor-not-allowed": !valid,
                   [buttonInteractions]: valid,
                 })}
                 disabled={!valid}
-                onClick={handleAddRoute(index)}
-                title="Add subroute"
+                onClick={() => handleAddRoute(index)}
+                title={t("bodyControls.subroute.add")}
+                type="button"
               >
                 <Icon type="add" />
               </button>
@@ -133,21 +111,17 @@ export default function RouteInput({
         ))}
       </div>
       <div className="flex items-center w-full">
-        <Input
-          className={classnames("mr-2", "my-4")}
-          error={internalMapper.min === ""}
-          onChange={handleChangeMapper("min")}
-          type="number"
-          value={internalMapper.min}
-        />
-        <Input
-          error={internalMapper.max === ""}
-          onChange={handleChangeMapper("max")}
-          value={internalMapper.max}
-          type="number"
-        />
+        {Object.keys(to).map((key) => (
+          <Input
+            key={`${routeKey}-to-${key}`}
+            className={classnames("mr-2", "my-4")}
+            error={to[key] === ""}
+            onChange={handleChangeMapper(key)}
+            type="number"
+            value={to[key]}
+          />
+        ))}
       </div>
-      <Button disabled={!valid} onClick={submit}>Save</Button>
     </>
   );
 }

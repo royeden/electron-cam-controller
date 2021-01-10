@@ -15,6 +15,9 @@ import { map } from "../utils/p5";
 
 import Button from "./Button";
 import { BodyPartsContext } from "../context/BodyPartsContext";
+import { objectMap } from "../utils/object";
+import { createRoute } from "../utils/route";
+import { FROM_MAPPER } from "../constants/posenet";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
@@ -180,7 +183,7 @@ export default function Camera() {
           g = map(g, 0, 255, minMapRGB, maxMapRGB);
           b = map(b, 0, 255, minMapRGB, maxMapRGB);
 
-          sendOSCMessage("/rgb", r, g, b);
+          // sendOSCMessage("/rgb", r, g, b);
         } catch (e) {
           console.log(e);
         }
@@ -191,38 +194,24 @@ export default function Camera() {
           const { score, keypoints } = await net.estimateSinglePose(video, {
             flipHorizontal: true,
           });
-          sendOSCMessage("/score", map(score, 0, 1, minMapScore, maxMapScore));
+          // sendOSCMessage("/score", map(score, 0, 1, minMapScore, maxMapScore));
           keypoints.forEach(
             ({ part, score: partScore, position: { x, y } }) => {
-              if (part === "leftWrist" || part === "rightWrist") {
-                const { routes } = bodyParts[part];
-                routes.forEach(route => {
-                  if (route.x.enabled) sendOSCMessage(
-                    `/${route.x.route}`,
-                    route.x.message(x)
-                  );
-                  if (route.y.enabled) sendOSCMessage(
-                    `/${route.y.route}`,
-                    route.y.message(y)
-                  );
-                  if (route.score.enabled) sendOSCMessage(
-                    `/${route.score.route}`,
-                    route.score.message(partScore)
-                  );
-                })
-              }
-              // sendOSCMessage(
-              //   `/${part}/score`,
-              //   map(partScore, 0, 1, minMapScore, maxMapScore, true)
-              // );
-              // sendOSCMessage(
-              //   `/${part}/x`,
-              //   map(x, 0, VIDEO.width, minMapParts, maxMapParts, true)
-              // );
-              // sendOSCMessage(
-              //   `/${part}/y`,
-              //   map(y, 0, VIDEO.height, minMapParts, maxMapParts, true)
-              // );
+              const routes = bodyParts[part];
+              const bodyPart = { score: partScore, x, y };
+              routes.forEach((subroutes) => {
+                objectMap(subroutes, (subroute, key) => {
+                  const oscRoute = createRoute({
+                    from: FROM_MAPPER[key],
+                    ...subroute,
+                  });
+                  if (oscRoute.enabled)
+                    sendOSCMessage(
+                      `/${oscRoute.route}`,
+                      oscRoute.message(bodyPart[key])
+                    );
+                });
+              });
             }
           );
           canvasContext.clearRect(0, 0, VIDEO.width, VIDEO.height);
@@ -380,60 +369,6 @@ export default function Camera() {
             value={maxMapRGB}
           />
         </div>
-        {/* <p>{t("camera.score.description")}</p>
-        <div className="flex items-center justify-between w-full my-4">
-          <label className="cursor-pointer" htmlFor="min-score">
-            {t("camera.score.map.min")}:
-          </label>
-          <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
-            id="min-score"
-            onChange={(event) => setMinMapScore(event.target.value)}
-            step="1"
-            type="number"
-            value={minMapScore}
-          />
-        </div>
-        <div className="flex items-center justify-between w-full my-4">
-          <label className="cursor-pointer" htmlFor="max-score">
-            {t("camera.score.map.max")}:
-          </label>
-          <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
-            id="max-score"
-            onChange={(event) => setMaxMapScore(event.target.value)}
-            step="1"
-            type="number"
-            value={maxMapScore}
-          />
-        </div>
-        <p>{t("camera.parts.description")}</p>
-        <div className="flex items-center justify-between w-full my-4">
-          <label className="cursor-pointer" htmlFor="min-parts">
-            {t("camera.parts.map.min")}:
-          </label>
-          <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
-            id="min-parts"
-            onChange={(event) => setMinMapParts(event.target.value)}
-            step="1"
-            type="number"
-            value={minMapParts}
-          />
-        </div>
-        <div className="flex items-center justify-between w-full my-4">
-          <label className="cursor-pointer" htmlFor="max-parts">
-            {t("camera.parts.map.max")}:
-          </label>
-          <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
-            id="max-parts"
-            onChange={(event) => setMaxMapParts(event.target.value)}
-            step="1"
-            type="number"
-            value={maxMapParts}
-          />
-        </div> */}
         <span>
           {t("camera.client.name")}:{" "}
           {oscLoaded

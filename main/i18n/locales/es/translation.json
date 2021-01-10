@@ -42,13 +42,26 @@
     "leftAnkle": "Tobillo izquierdo",
     "rightAnkle": "Tobillo derecho"
   },
+  "bodyControls": {
+    "form": {
+      "save": "Guardar cambios"
+    },
+    "route": {
+      "add": "Añadir ruta",
+      "delete": "Borrar ruta"
+    },
+    "subroute": {
+      "add": "Añadir subruta",
+      "delete": "Borrar subruta"
+    }
+  },
   "camera": {
     "controls": {
       "skeleton": {
         "toggle": "{{ status }} esqueleto",
         "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
         "status": {
-          "on": "Encender",
+          "on": "Mostrar",
           "off": "Apagar"
         }
       },
@@ -56,7 +69,7 @@
         "toggle": "{{ status }} tracking",
         "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
         "status": {
-          "on": "Mostrar",
+          "on": "Encender",
           "off": "Ocultar"
         }
       },

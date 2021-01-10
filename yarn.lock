@@ -5280,6 +5280,11 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
+tailwind-scrollbar@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/tailwind-scrollbar/-/tailwind-scrollbar-1.1.2.tgz#0a0e24d3ffa10a6e8e099a41f49bc3e3e442c347"
+  integrity sha512-kDOE3Th4zeuDAwDNnUC2t4ueQRqkRtCOXSjP17T9cYfSPi/0q3Dn+vON5PuopdxYkiUBMHnHdtWZ+6Hk3XrXTg==
+
 tailwindcss-classnames@^1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/tailwindcss-classnames/-/tailwindcss-classnames-1.9.0.tgz#68f142649a0f1dbff8c121a2c5d21c886637ea8d"

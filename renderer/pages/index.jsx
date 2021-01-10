@@ -1,12 +1,18 @@
 import Camera from "../components/Camera";
 import BodyControls from "../components/BodyControls";
 import BodyPartModal from "../components/BodyPartModal";
+import { BodyPartsContext } from "../context/BodyPartsContext";
+import { useContext } from "react";
+import usePreviousIf from "../lib/hooks/usePreviousIf";
 
 const Home = () => {
+  const { editingPart } = useContext(BodyPartsContext);
+  const key = usePreviousIf(editingPart, "");
   return (
     <main className="flex flex-col items-center justify-center min-h-screen text-white bg-dark">
-      <BodyPartModal />
-      <div className="flex items-center justify-between w-full">
+      {/* Force rerender only when key changes, this prevents content from disappearing out in animations */}
+      <BodyPartModal key={key} />
+      <div className="flex items-center justify-around w-full">
         <BodyControls />
         <Camera />
       </div>

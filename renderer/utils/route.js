@@ -1,4 +1,6 @@
+import { BODY_PART, FROM_MAPPER, TO_MAPPER } from "../constants/posenet";
 import { idempotence } from "./fp";
+import { objectMap } from "./object";
 import { map } from "./p5";
 
 export function createRoute({
@@ -12,11 +14,44 @@ export function createRoute({
   return {
     enabled,
     route,
-    mapper: to,
     message(value) {
       return transformer(
         map(value, from.min, from.max, to.min, to.max, constrain)
       );
     },
   };
+}
+
+export function createBodyPartRoute(bodyPart) {
+  return {
+    [BODY_PART.x]: {
+      from: FROM_MAPPER[BODY_PART.x],
+      route: `${bodyPart}/x`,
+      to: TO_MAPPER[BODY_PART.x],
+    },
+    [BODY_PART.y]: {
+      from: FROM_MAPPER[BODY_PART.y],
+      route: `${bodyPart}/y`,
+      to: TO_MAPPER[BODY_PART.y],
+    },
+    [BODY_PART.score]: {
+      from: FROM_MAPPER[BODY_PART.score],
+      route: `${bodyPart}/score`,
+      to: TO_MAPPER[BODY_PART.score],
+    },
+  };
+}
+
+export function createFormRoute(route) {
+  return objectMap(route, ({ route, to }) => ({
+    route: route.split("/"),
+    to: objectMap(to, String),
+  }))
+}
+
+export function formRouteToRoute(route) {
+  return objectMap(route, ({ route, to }) => ({
+    route: route.join("/"),
+    to: objectMap(to, Number),
+  }))
 }

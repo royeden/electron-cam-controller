@@ -1,120 +1,60 @@
-import { createRoute } from "../utils/route";
+import { createBodyPartRoute } from "../utils/route";
 import { VIDEO } from "./video";
 
-export const partNames = [
-  "nose",
-  "leftEye",
-  "rightEye",
-  "leftEar",
-  "rightEar",
-  "leftShoulder",
-  "rightShoulder",
-  "leftElbow",
-  "rightElbow",
-  "leftWrist",
-  "rightWrist",
-  "leftHip",
-  "rightHip",
-  "leftKnee",
-  "rightKnee",
-  "leftAnkle",
-  "rightAnkle",
-];
-
-export const FROM_MAPPER = {
-  x: { min: 0, max: VIDEO.width },
-  y: { min: 0, max: VIDEO.height },
-  score: { min: 0, max: 1},
-}
-
-export function bodyPartRoute(part) {
-  return {
-    x: createRoute({
-      part,
-      route: `${part}/x`,
-      from: FROM_MAPPER.x,
-      to: { min: 0, max: 1000 },
-    }),
-    y: createRoute({
-      part,
-      route: `${part}/y`,
-      from: FROM_MAPPER.y,
-      to: { min: 0, max: 1000 },
-    }),
-    score: createRoute({
-      part,
-      route: `${part}/score`,
-    }),
-  };
-}
+export const BODY_PART = {
+  score: "score",
+  x: "x",
+  y: "y",
+};
 
 export const BODY_PARTS = {
-  nose: {
-    type: "nose",
-    routes: [bodyPartRoute("nose")],
-  },
-  leftEye: {
-    type: "leftEye",
-    routes: [bodyPartRoute("leftEye")],
-  },
-  rightEye: {
-    type: "rightEye",
-    routes: [bodyPartRoute("rightEye")],
-  },
-  leftEar: {
-    type: "leftEar",
-    routes: [bodyPartRoute("leftEar")],
-  },
-  rightEar: {
-    type: "rightEar",
-    routes: [bodyPartRoute("rightEar")],
-  },
-  leftShoulder: {
-    type: "leftShoulder",
-    routes: [bodyPartRoute("leftShoulder")],
-  },
-  rightShoulder: {
-    type: "rightShoulder",
-    routes: [bodyPartRoute("rightShoulder")],
-  },
-  leftElbow: {
-    type: "leftElbow",
-    routes: [bodyPartRoute("leftElbow")],
-  },
-  rightElbow: {
-    type: "rightElbow",
-    routes: [bodyPartRoute("rightElbow")],
-  },
-  leftWrist: {
-    type: "leftWrist",
-    routes: [bodyPartRoute("leftWrist")],
-  },
-  rightWrist: {
-    type: "rightWrist",
-    routes: [bodyPartRoute("rightWrist")],
-  },
-  leftHip: {
-    type: "leftHip",
-    routes: [bodyPartRoute("leftHip")],
-  },
-  rightHip: {
-    type: "rightHip",
-    routes: [bodyPartRoute("rightHip")],
-  },
-  leftKnee: {
-    type: "leftKnee",
-    routes: [bodyPartRoute("leftKnee")],
-  },
-  rightKnee: {
-    type: "rightKnee",
-    routes: [bodyPartRoute("rightKnee")],
-  },
-  leftAnkle: {
-    type: "leftAnkle",
-    routes: [bodyPartRoute("leftAnkle")],
-  },
-  rightAnkle: {
-    type: "rightAnkle",
-    routes: [bodyPartRoute("rightAnkle")],
-  },
+  leftEar: "leftEar",
+  leftEye: "leftEye",
+  nose: "nose",
+  rightEye: "rightEye",
+  rightEar: "rightEar",
+  leftShoulder: "leftShoulder",
+  rightShoulder: "rightShoulder",
+  leftElbow: "leftElbow",
+  rightElbow: "rightElbow",
+  leftWrist: "leftWrist",
+  rightWrist: "rightWrist",
+  leftHip: "leftHip",
+  rightHip: "rightHip",
+  leftKnee: "leftKnee",
+  rightKnee: "rightKnee",
+  leftAnkle: "leftAnkle",
+  rightAnkle: "rightAnkle",
+};
+
+export const FROM_MAPPER = {
+  [BODY_PART.x]: { min: 0, max: VIDEO.width },
+  [BODY_PART.y]: { min: 0, max: VIDEO.height },
+  [BODY_PART.score]: { min: 0, max: 1 },
+};
+
+export const TO_MAPPER = {
+  [BODY_PART.x]: { min: 0, max: 1000 },
+  [BODY_PART.y]: { min: 0, max: 1000 },
+  [BODY_PART.score]: { min: 0, max: 1 },
+};
+
+export const BODY_PARTS_ROUTES = {
+  [BODY_PARTS.nose]: [createBodyPartRoute(BODY_PARTS.nose)],
+  [BODY_PARTS.leftEye]: [createBodyPartRoute(BODY_PARTS.leftEye)],
+  [BODY_PARTS.rightEye]: [createBodyPartRoute(BODY_PARTS.rightEye)],
+  [BODY_PARTS.leftEar]: [createBodyPartRoute(BODY_PARTS.leftEar)],
+  [BODY_PARTS.rightEar]: [createBodyPartRoute(BODY_PARTS.rightEar)],
+  [BODY_PARTS.leftShoulder]: [createBodyPartRoute(BODY_PARTS.leftShoulder)],
+  [BODY_PARTS.rightShoulder]: [createBodyPartRoute(BODY_PARTS.rightShoulder)],
+  [BODY_PARTS.leftElbow]: [createBodyPartRoute(BODY_PARTS.leftElbow)],
+  [BODY_PARTS.rightElbow]: [createBodyPartRoute(BODY_PARTS.rightElbow)],
+  [BODY_PARTS.leftWrist]: [createBodyPartRoute(BODY_PARTS.leftWrist)],
+  [BODY_PARTS.rightWrist]: [createBodyPartRoute(BODY_PARTS.rightWrist)],
+  [BODY_PARTS.leftHip]: [createBodyPartRoute(BODY_PARTS.leftHip)],
+  [BODY_PARTS.rightHip]: [createBodyPartRoute(BODY_PARTS.rightHip)],
+  [BODY_PARTS.leftKnee]: [createBodyPartRoute(BODY_PARTS.leftKnee)],
+  [BODY_PARTS.rightKnee]: [createBodyPartRoute(BODY_PARTS.rightKnee)],
+  [BODY_PARTS.leftAnkle]: [createBodyPartRoute(BODY_PARTS.leftAnkle)],
+  [BODY_PARTS.rightAnkle]: [createBodyPartRoute(BODY_PARTS.rightAnkle)],
 };

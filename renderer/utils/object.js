@@ -33,13 +33,40 @@ export function mergeDeep(target, source) {
 
 /**
  * Map object properties and return a new object.
- * @param object
-//  * @callback
+ * @param {Object} object Object that will be mapped
+ * @param {objectMapCallback} callback
+ * @returns {Object} Mapped object
  */
-export function objectMap(object = {}, callback) {
+
+export function objectMap(
+  object = {},
+  callback = function defaultCallback(value, key = "", object = {}) {
+    return value;
+  }
+) {
   return Object.keys(object).reduce(
     (output, key) =>
       mergeDeep(output, { [key]: callback(object[key], key, object) }),
     {}
   );
+}
+
+/**
+ * This callback transforms the values for the object key
+ * @callback objectMapCallback
+ * @param {*} value The value for the object key
+ * @param {string} key The key that's being mapped
+ * @param {Object} object The original object (mutable)
+ * @returns {*} Value at mapped key
+ */
+
+/**
+ * Throws error if param is not object
+ * @param {*} possibleObject
+ */
+export function objectCheck(possibleObject) {
+  if (!isObject(possibleObject))
+    throw new Error(
+      "Param is not an object. Please use objects with this function!"
+    );
 }

@@ -42,6 +42,19 @@
     "leftAnkle": "Left Ankle",
     "rightAnkle": "Right Ankle"
   },
+  "bodyControls": {
+    "form": {
+      "save": "Save changes"
+    },
+    "route": {
+      "add": "Add route",
+      "delete": "Delete route"
+    },
+    "subroute": {
+      "add": "Add subroute",
+      "delete": "Delete subroute"
+    }
+  },
   "camera": {
     "controls": {
       "skeleton": {

@@ -1,9 +1,9 @@
 import { createContext, useState } from "react";
-import { BODY_PARTS } from "../constants/posenet";
+import { BODY_PARTS_ROUTES } from "../constants/posenet";
 import useObjectState from "../lib/hooks/useObjectState";
 
 const initialContext = {
-  bodyParts: BODY_PARTS,
+  bodyParts: BODY_PARTS_ROUTES,
   setBodyParts(bodyParts = {}) {},
   mergeBodyParts(bodyParts = {}) {},
   editingPart: "",
@@ -16,9 +16,10 @@ const { Provider } = BodyPartsContext;
 
 export default function BodyPartsProvider({ children, ...props }) {
   const [editingPart, setEditingPart] = useState(initialContext.editingPart);
-  const [bodyParts, setBodyParts, mergeBodyParts] = useObjectState(
-    initialContext.bodyParts
-  );
+  const [
+    bodyParts,
+    { set: setBodyParts, merge: mergeBodyParts },
+  ] = useObjectState(initialContext.bodyParts);
   return (
     <Provider
       value={{
