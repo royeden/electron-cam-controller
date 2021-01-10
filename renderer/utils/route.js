@@ -25,16 +25,22 @@ export function createRoute({
 export function createBodyPartRoute(bodyPart) {
   return {
     [BODY_PART.x]: {
+      constrain: true,
+      enabled: true,
       from: FROM_MAPPER[BODY_PART.x],
       route: `${bodyPart}/x`,
       to: TO_MAPPER[BODY_PART.x],
     },
     [BODY_PART.y]: {
+      constrain: true,
+      enabled: true,
       from: FROM_MAPPER[BODY_PART.y],
       route: `${bodyPart}/y`,
       to: TO_MAPPER[BODY_PART.y],
     },
     [BODY_PART.score]: {
+      constrain: true,
+      enabled: true,
       from: FROM_MAPPER[BODY_PART.score],
       route: `${bodyPart}/score`,
       to: TO_MAPPER[BODY_PART.score],
@@ -43,14 +49,16 @@ export function createBodyPartRoute(bodyPart) {
 }
 
 export function createFormRoute(route) {
-  return objectMap(route, ({ route, to }) => ({
+  return objectMap(route, ({ route, to, ...rest }) => ({
+    ...rest,
     route: route.split("/"),
     to: objectMap(to, String),
   }))
 }
 
 export function formRouteToRoute(route) {
-  return objectMap(route, ({ route, to }) => ({
+  return objectMap(route, ({ route, to, ...rest }) => ({
+    ...rest,
     route: route.join("/"),
     to: objectMap(to, Number),
   }))

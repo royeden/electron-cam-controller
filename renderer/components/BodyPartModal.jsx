@@ -1,5 +1,6 @@
 import { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { classnames } from "tailwindcss-classnames";
 
 import { BodyPartsContext } from "../context/BodyPartsContext";
 import useObjectListState from "../lib/hooks/useObjectListState";
@@ -55,7 +56,7 @@ export default function BodyPartModal() {
   return (
     <Modal
       contentLabel={t(`bodyParts.${editingPart}`)}
-      className="w-1/3 max-w-full p-8 mx-6 overflow-hidden min-w-max h-2/3"
+      className="w-2/3 max-w-full p-8 mx-6 overflow-hidden lg:w-1/2 h-2/3 min-w-min"
       visible={Boolean(editingPart)}
       onRequestClose={() => setEditingPart("")}
     >
@@ -64,35 +65,56 @@ export default function BodyPartModal() {
           {t(`bodyParts.${header}`)}
         </h1>
         <p>Changed: {`${hasChanged}`}</p>
-        <div className="h-full px-4 pt-2 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-secondary-DEFAULT">
+        <div className="h-full pt-2 pr-4 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-secondary-DEFAULT">
           {form.length > 0 ? (
             form.map((routes, index) => {
               const routeKey = `${editingPart}-route-${index}`;
+              const routeKeys = Object.keys(routes);
               return (
-                <div key={routeKey} className="pt-2">
-                  {Object.keys(routes).map((route) => (
-                    <RouteInput
+                <div
+                  key={routeKey}
+                  className="flex flex-col p-4 mb-4 border-2 rounded-md border-light-medium"
+                >
+                  <div>
+                    <Button
+                      onClick={() =>
+                        add(
+                          index + 1,
+                          createFormRoute(createBodyPartRoute(editingPart))
+                        )
+                      }
+                    >
+                      {t("bodyControls.route.add")}
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        add(index + 1, JSON.parse(JSON.stringify(routes)))
+                      }
+                    >
+                      Copy route
+                    </Button>
+                    <Button onClick={() => remove(index)}>
+                      {t("bodyControls.route.delete")}
+                    </Button>
+                  </div>
+                  {routeKeys.map((route, routeIndex) => (
+                    <div
                       key={`${routeKey}-${route}`}
-                      onChange={changeSubroute(index, route)}
-                      route={route}
-                      routeKey={routeKey}
-                      routes={routes[route].route}
-                      to={routes[route].to}
-                    />
+                      className={classnames({
+                        [classnames("border-b-2", "border-light-medium")]:
+                          routeIndex + 1 < routeKeys.length,
+                      })}
+                    >
+                      <RouteInput
+                        enabled={routes[route].enabled}
+                        onChange={changeSubroute(index, route)}
+                        route={route}
+                        routeKey={routeKey}
+                        routes={routes[route].route}
+                        to={routes[route].to}
+                      />
+                    </div>
                   ))}
-                  <Button
-                    onClick={() =>
-                      add(
-                        index + 1,
-                        createFormRoute(createBodyPartRoute(editingPart))
-                      )
-                    }
-                  >
-                    {t("bodyControls.route.add")}
-                  </Button>
-                  <Button onClick={() => remove(index)}>
-                    {t("bodyControls.route.delete")}
-                  </Button>
                 </div>
               );
             })

@@ -1,9 +1,10 @@
+import { useContext } from "react";
+
 import Camera from "../components/Camera";
 import BodyControls from "../components/BodyControls";
 import BodyPartModal from "../components/BodyPartModal";
-import { BodyPartsContext } from "../context/BodyPartsContext";
-import { useContext } from "react";
 import usePreviousIf from "../lib/hooks/usePreviousIf";
+import { BodyPartsContext } from "../context/BodyPartsContext";
 
 const Home = () => {
   const { editingPart } = useContext(BodyPartsContext);

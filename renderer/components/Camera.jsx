@@ -7,17 +7,17 @@ import { useTranslation } from "react-i18next";
 
 import OSC_EVENTS from "../../main/events/osc";
 import useAnimationFrame from "../lib/hooks/useAnimationFrame";
-import tailwind from "../../tailwind.config";
 import useToggle from "../lib/hooks/useToggle";
+import tailwind from "../../tailwind.config";
 import { VIDEO } from "../constants/video";
+import { FROM_MAPPER } from "../constants/posenet";
 import { drawKeyPoints, drawSkeleton } from "../utils/posenet";
 import { map } from "../utils/p5";
-
-import Button from "./Button";
 import { BodyPartsContext } from "../context/BodyPartsContext";
 import { objectMap } from "../utils/object";
 import { createRoute } from "../utils/route";
-import { FROM_MAPPER } from "../constants/posenet";
+
+import Button from "./Button";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
@@ -33,16 +33,11 @@ export default function Camera() {
   const [camera, setCamera] = useState(0);
   const [oscPort, setOscPort] = useState(`${defaultPort}`);
   const [oscPortValue, setOscPortValue] = useState(defaultPort);
-  const [maxMapParts, setMaxMapParts] = useState(1000);
-  const [minMapParts, setMinMapParts] = useState(0);
   const [maxMapRGB, setMaxMapRGB] = useState(1000);
   const [minMapRGB, setMinMapRGB] = useState(0);
-  const [maxMapScore, setMaxMapScore] = useState(1000);
-  const [minMapScore, setMinMapScore] = useState(0);
-  const [] = useState(0);
   const [oscLoaded, , overrideOscLoaded] = useToggle();
-  const [minScore, setMinScore] = useState(0.3);
   const [cameras, setCameras] = useState([]);
+  const [minScore, setMinScore] = useState(0.3);
   const [modelActive, toggleModelActive] = useToggle();
   const [modelLoaded, , setModelLoaded] = useToggle();
   const [modelSkeleton, toggleModelSkeleton] = useToggle();
@@ -201,10 +196,7 @@ export default function Camera() {
               const bodyPart = { score: partScore, x, y };
               routes.forEach((subroutes) => {
                 objectMap(subroutes, (subroute, key) => {
-                  const oscRoute = createRoute({
-                    from: FROM_MAPPER[key],
-                    ...subroute,
-                  });
+                  const oscRoute = createRoute(subroute);
                   if (oscRoute.enabled)
                     sendOSCMessage(
                       `/${oscRoute.route}`,
@@ -242,12 +234,8 @@ export default function Camera() {
   }, [
     bodyParts,
     cameraOn,
-    maxMapParts,
     maxMapRGB,
-    maxMapScore,
-    minMapParts,
     minMapRGB,
-    minMapScore,
     minScore,
     modelActive,
     modelLoaded,

@@ -11,6 +11,7 @@ import { curry } from "../utils/fp";
 
 import Icon from "./Icon";
 import Input from "./Input";
+import Toggle from "./Toggle";
 
 const buttonInteractions = classnames("hover:border-light", "hover:text-light");
 
@@ -30,6 +31,7 @@ const buttonClass = classnames(
 );
 
 export default function RouteInput({
+  enabled = true,
   onChange,
   route = "",
   routeKey = "",
@@ -43,26 +45,44 @@ export default function RouteInput({
     [routes, to]
   );
 
-  const handleAddRoute = useCallback((index) =>
-    onChange({ route: insertArrayValue(routes, index + 1, "") }), [routes])
-  
-  const handleChangeRoute = useCallback(curry(function changeRoute(index, event) {
-    onChange({ route: modifyArrayValue(routes, index, event.target.value) })
-  }), [routes]);
-  
-  const handleDeleteRoute = useCallback((index) =>
-  onChange({ route: removeArrayValue(routes, index) }), [routes])
-  
-  const handleChangeMapper = useCallback(curry(function changeMapper(key, event) {
-    onChange({ to: { [key]: event.target.value} })
-  }), [routes]);
+  const handleAddRoute = useCallback(
+    (index) => onChange({ route: insertArrayValue(routes, index + 1, "") }),
+    [routes]
+  );
+
+  const handleChangeRoute = useCallback(
+    curry(function changeRoute(index, event) {
+      onChange({ route: modifyArrayValue(routes, index, event.target.value) });
+    }),
+    [routes]
+  );
+
+  const handleDeleteRoute = useCallback(
+    (index) => onChange({ route: removeArrayValue(routes, index) }),
+    [routes]
+  );
+
+  const handleChangeMapper = useCallback(
+    curry(function changeMapper(key, event) {
+      onChange({ to: { [key]: event.target.value } });
+    }),
+    []
+  );
+
+  const handleChangeEnabled = useCallback(
+    () => onChange({ enabled: !enabled }),
+    [enabled]
+  );
 
   return (
-    <>
+    <div className="my-8">
       <h3>{route.toUpperCase()}</h3>
-      <div className="flex items-center w-full">
+      <div className="flex flex-wrap items-center w-full">
         {routes.map((subroute, index) => (
-          <div key={`${routeKey}-${route}-subroute-${index}`}>
+          <div
+            className="flex items-center my-2"
+            key={`${routeKey}-${route}-subroute-${index}`}
+          >
             <span>/</span>
             {index > 0 && (
               <Tippy
@@ -111,6 +131,7 @@ export default function RouteInput({
         ))}
       </div>
       <div className="flex items-center w-full">
+        <h4>Mapper:</h4>
         {Object.keys(to).map((key) => (
           <Input
             key={`${routeKey}-to-${key}`}
@@ -122,6 +143,9 @@ export default function RouteInput({
           />
         ))}
       </div>
-    </>
+      <Toggle checked={enabled} onChange={handleChangeEnabled}>
+        Enabled
+      </Toggle>
+    </div>
   );
 }
