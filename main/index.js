@@ -74,7 +74,7 @@ app.on("ready", async () => {
         changeLanguage,
         isDev
       );
-      mainWindow.webContents.send("language-changed", language);
+      mainWindow.webContents.send(I18N_EVENTS.changeLanguage, language);
     }
   };
 
@@ -87,7 +87,7 @@ app.on("ready", async () => {
     isDev
   );
 
-  ipcMain.on("get-initial-language", (event) => {
+  ipcMain.on(I18N_EVENTS.getInitialLanguage, (event) => {
     event.returnValue = i18n.locale();
   });
 });

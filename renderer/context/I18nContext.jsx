@@ -5,6 +5,7 @@ import { defaultLocale } from "../../main/i18n/config";
 import translations from "../i18n/translations";
 import useToggle from "../lib/hooks/useToggle";
 import Loader from "../components/Loader";
+import I18N_EVENTS from "../../main/events/i18n";
 
 const i18n = rosetta(translations);
 
@@ -43,11 +44,11 @@ export default function I18nProvider({ children }) {
 
   useEffect(() => {
     if (process.browser && window) {
-      window.ipcRenderer.on("language-changed", (event, language) => {
+      window.ipcRenderer.on(I18N_EVENTS.getInitialLanguage, (event, language) => {
         console.log(language);
         i18nWrapper.locale(language);
       });
-      const defaultLanguage = window.ipcRenderer.send("get-initial-language");
+      const defaultLanguage = window.ipcRenderer.send(I18N_EVENTS.getInitialLanguage);
       i18nWrapper.locale(defaultLanguage || defaultLocale);
       toggleLoaded();
     }
