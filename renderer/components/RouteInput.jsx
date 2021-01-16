@@ -1,7 +1,8 @@
 import Tippy from "@tippyjs/react";
 import { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { classnames } from "tailwindcss-classnames";
+
+import useTranslation from "../lib/hooks/useTranslation";
 import {
   insertArrayValue,
   modifyArrayValue,

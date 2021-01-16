@@ -3,11 +3,11 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import * as poseNet from "@tensorflow-models/posenet";
 import "@tensorflow/tfjs-backend-webgl";
-import { useTranslation } from "react-i18next";
 
 import OSC_EVENTS from "../../main/events/osc";
 import useAnimationFrame from "../lib/hooks/useAnimationFrame";
 import useToggle from "../lib/hooks/useToggle";
+import useTranslation from "../lib/hooks/useTranslation";
 import tailwind from "../../tailwind.config";
 import { VIDEO } from "../constants/video";
 import { FROM_MAPPER } from "../constants/posenet";

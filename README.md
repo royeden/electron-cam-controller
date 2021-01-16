@@ -126,7 +126,7 @@ Para generar una versión del proyecto para las plataformas soportadas (Windows 
 
 ## Roadmap (lo que se viene):
 
-- [] Agregar traducciones de los controles de la app a español.
+- [] Agregar traducciones de los controles de la app a español (In progress).
 - [] Agregar linters, reforzar un estilo de código y validar posibles errores.
 - [] Agregar git-hooks.
 - [] Permitir cambiar la cámara que se está usando.
@@ -136,9 +136,11 @@ Para generar una versión del proyecto para las plataformas soportadas (Windows 
 - [] Agregar tutoriales.
 - [] Identificar poses fuera del rango de la cámara?
 - [] Configurar prefijos y sufijos para los mensajes de OSC?
-- [] Permitir transformar los valores de OSC (redondear a números enteros / posiciones decimales)
-- [] Identificar poses fuera del rango de la cámara?
-- [] Rutas configurables para el envío de OSC?
+- [] Establecer rangos dinámicos de acciones?
+- [] Guardar y cargar configuración en un JSON
+- [] Permitir transformar los valores de OSC (redondear a números enteros / posiciones decimales). (In progress)
+- [] Identificar poses fuera del rango de la cámara? (In progress)
+- [x] ~Rutas configurables para el envío de OSC?~
 - Ver qué otros features divertidos se pueden agregar, siempre se aceptan sugerencias / contribuciones <3.
 
 ## Como colaborar con este proyecto

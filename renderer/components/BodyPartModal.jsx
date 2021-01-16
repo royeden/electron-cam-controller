@@ -1,10 +1,10 @@
 import { useCallback, useContext, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { classnames } from "tailwindcss-classnames";
 
 import { BodyPartsContext } from "../context/BodyPartsContext";
 import useObjectListState from "../lib/hooks/useObjectListState";
 import usePreviousIf from "../lib/hooks/usePreviousIf";
+import useTranslation from "../lib/hooks/useTranslation";
 import { curry } from "../utils/fp";
 import {
   createBodyPartRoute,

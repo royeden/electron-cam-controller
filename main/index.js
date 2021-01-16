@@ -2,18 +2,21 @@
 const { join } = require("path");
 const { format } = require("url");
 const OSC = require("osc-js");
+const rosetta = require("rosetta");
+
+const menuTranslations = require("./i18n/menu");
+const { defaultLocale, locales } = require("./i18n/config");
+const i18n = rosetta(menuTranslations);
+const menuFactoryService = require("./services/menuFactory");
 
 // Packages
 const { BrowserWindow, app, ipcMain, shell } = require("electron");
 const isDev = require("electron-is-dev");
 const prepareNext = require("electron-next");
 
-// OSC
+// EVENTS
 const OSC_EVENTS = require("./events/osc");
-
-const i18n = require("./i18n");
-const { defaultLocale, locales } = require("./i18n.config");
-const menuFactoryService = require("./services/menuFactory");
+const I18N_EVENTS = require("./events/i18n");
 
 const {
   default: installExtension,
@@ -56,28 +59,37 @@ app.on("ready", async () => {
       .catch((err) => console.log("An error occurred: ", err));
   }
 
-  i18n.on("loaded", (loaded) => {
-    i18n.changeLanguage(locales.find(locale => app.getLocale().includes(locale)) || defaultLocale);
-    i18n.off("loaded");
-  });
+  const defaultLanguage =
+    locales.find((locale) => app.getLocale().includes(locale)) || defaultLocale;
+  i18n.locale(defaultLanguage);
 
-  i18n.on("languageChanged", (lng) => {
-    menuFactoryService.buildMenu(app, mainWindow, shell, i18n, isDev);
-    mainWindow.webContents.send("language-changed", {
-      language: lng,
-      namespace: "translation",
-      resource: i18n.getResourceBundle(lng, "translation"),
-    });
-  });
+  const changeLanguage = (language = defaultLanguage) => {
+    if (language !== i18n.locale()) {
+      i18n.locale(language);
+      menuFactoryService.buildMenu(
+        app,
+        mainWindow,
+        shell,
+        i18n,
+        changeLanguage,
+        isDev
+      );
+      mainWindow.webContents.send("language-changed", language);
+    }
+  };
 
-  ipcMain.on("get-initial-language", (event, arg) => {
-    i18n.changeLanguage(locales.find(locale => app.getLocale().includes(locale)) || defaultLocale);
-  });
+  menuFactoryService.buildMenu(
+    app,
+    mainWindow,
+    shell,
+    i18n,
+    changeLanguage,
+    isDev
+  );
 
-  if (i18n.isInitialized) {
-    i18n.changeLanguage(locales.find(locale => app.getLocale().includes(locale)) || defaultLocale);
-    i18n.off("loaded");
-  }
+  ipcMain.on("get-initial-language", (event) => {
+    event.returnValue = i18n.locale();
+  });
 });
 
 // Quit the app once all windows are closed

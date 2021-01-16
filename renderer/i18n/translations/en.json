@@ -1,28 +1,4 @@
 {
-  "menu": {
-    "app": {
-      "quit": "Quit"
-    },
-    "view": {
-      "title": "View",
-      "reload": "Reload",
-      "fullscreen": "Fullscreen",
-      "minimize": "Minimize"
-    },
-    "help": {
-      "title": "Help",
-      "about": "About OSC Cam",
-      "examples": "Examples"
-    },
-    "language": {
-      "title": "Language",
-      "en": "English",
-      "es": "Spanish"
-    },
-    "development": {
-      "inspector": "Toggle inspector"
-    }
-  },
   "bodyParts": {
     "nose": "Nose",
     "leftEye": "Left Eye",

@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { BODY_PARTS } from "../constants/posenet";
 import { BodyPartsContext } from "../context/BodyPartsContext";
 import Skeleton from "./Skeleton";
-import { useTranslation } from "react-i18next";
+import useTranslation from "../lib/hooks/useTranslation";
 
 function EditBodyPart({
   bodyPart,

@@ -1,28 +1,4 @@
 {
-  "menu": {
-    "app": {
-      "quit": "Salir"
-    },
-    "view": {
-      "title": "Ver",
-      "reload": "Recargar",
-      "fullscreen": "Pantalla completa",
-      "minimize": "Minimizar"
-    },
-    "help": {
-      "title": "Ayuda",
-      "about": "Sobre OSC Cam",
-      "examples": "Ejemplos"
-    },
-    "language": {
-      "title": "Idioma",
-      "en": "Inglés",
-      "es": "Español"
-    },
-    "development": {
-      "inspector": "Alternar inspector"
-    }
-  },
   "bodyParts": {
     "nose": "Nariz",
     "leftEye": "Ojo izquierdo",
@@ -74,7 +50,7 @@
         }
       },
       "camera": {
-        "notice": "Esta apliacación utiliza la cámara web, por favor, enciende tu cámara web",
+        "notice": "Esta aplicación utiliza la cámara web, por favor, enciende tu cámara web",
         "turnOn": "¡Encender la cámara!"
       },
       "osc": {
