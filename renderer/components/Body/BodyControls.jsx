@@ -19,7 +19,7 @@ function EditBodyPart({
         animation="shift-away"
         arrow
         className="w-full h-full outline-none focus:outline-none"
-        content={t(`bodyParts.${bodyPart}`)}
+        content={t(`routes.${bodyPart}`)}
         placement={placement}
       >
         <button

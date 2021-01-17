@@ -1,5 +1,5 @@
 import rosetta from "rosetta";
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef } from "react";
 
 import { defaultLocale } from "../../main/i18n/config";
 import translations from "../i18n/translations";
@@ -26,7 +26,7 @@ const { Provider } = i18nContext;
 export default function I18nProvider({ children }) {
   const activeLocaleRef = useRef(defaultLocale);
   const [loaded, toggleLoaded] = useToggle();
-  const [, setTick] = useState(0);
+  const [, toggleTick] = useToggle();
 
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
@@ -37,19 +37,18 @@ export default function I18nProvider({ children }) {
       if (dict) {
         i18n.set(l, dict);
       }
-      // // force rerender to update view
-      setTick((tick) => tick + 1);
+      // force rerender to update view
+      toggleTick();
     },
   };
 
   useEffect(() => {
     if (process.browser && window) {
-      window.ipcRenderer.on(I18N_EVENTS.getInitialLanguage, (event, language) => {
-        console.log(language);
+      window.ipcRenderer.on(I18N_EVENTS.changeLanguage, (event, language) => {
         i18nWrapper.locale(language);
       });
-      const defaultLanguage = window.ipcRenderer.send(I18N_EVENTS.getInitialLanguage);
-      i18nWrapper.locale(defaultLanguage || defaultLocale);
+      const language = window.ipcRenderer.sendSync(I18N_EVENTS.getInitialLanguage);
+      i18nWrapper.locale(language || defaultLocale);
       toggleLoaded();
     }
   }, []);

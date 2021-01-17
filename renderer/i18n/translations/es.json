@@ -1,5 +1,7 @@
 {
-  "bodyParts": {
+  "routes": {
+    "score": "Puntuación",
+    "rgb": "RGB",
     "nose": "Nariz",
     "leftEye": "Ojo izquierdo",
     "rightEye": "Ojo derecho",

@@ -7,27 +7,58 @@ import useObjectListState from "../../lib/hooks/useObjectListState";
 import usePreviousIf from "../../lib/hooks/usePreviousIf";
 import useTranslation from "../../lib/hooks/useTranslation";
 import { RoutesContext } from "../../context/RoutesContext";
-import { createBodyPartRoute } from "../../constants/posenet";
+import { BODY_PARTS, createBodyPartRoute } from "../../constants/posenet";
 import {
+  createFormBodyPartRoute,
   createFormRoute,
+  formBodyPartRouteToRoute,
   formRouteToRoute,
 } from "../../utils/route";
 import { curry } from "../../utils/fp";
 
 import RouteInput from "./RouteInput";
+import { createBaseRoute } from "../../constants/routes";
+
+const bodyParts = Object.keys(BODY_PARTS);
 
 export default function RoutesModal() {
   const { t } = useTranslation();
-  const { routes, editingRoute, setEditingRoute, mergeRoutes } = useContext(
+  const { editingRoute, mergeRoutes, routes, setEditingRoute } = useContext(
     RoutesContext
   );
+  const isBodyPart = useMemo(() => bodyParts.includes(editingRoute), [
+    editingRoute,
+  ]);
+
   const header = usePreviousIf(editingRoute, "");
+
   const initialValue = useMemo(
-    () => (editingRoute ? routes[editingRoute].map(createFormRoute) : []),
-    [routes, editingRoute]
+    () =>
+      editingRoute
+        ? routes[editingRoute].map(
+            isBodyPart ? createFormBodyPartRoute : createFormRoute
+          )
+        : [],
+    [editingRoute, routes]
   );
 
   const [form, { add, merge, remove, set }] = useObjectListState(initialValue);
+
+  const handleAddRoute = useCallback(
+    (index) => () =>
+      add(
+        index + 1,
+        isBodyPart
+          ? createFormBodyPartRoute(createBodyPartRoute(editingRoute))
+          : createFormRoute(createBaseRoute(editingRoute))
+      ),
+    [editingRoute, isBodyPart]
+  );
+
+  const handleCopyRoute = useCallback(
+    (index, routes) => () => add(index + 1, JSON.parse(JSON.stringify(routes))),
+    [routes]
+  );
 
   // Quickest way to apply a deep comparison of objects, we take advantage of the serializable* values that we are using
   // *We know these values are serializable because we are be able to export them to JSON files to keep our configuration
@@ -38,17 +69,28 @@ export default function RoutesModal() {
 
   const reset = () => set(initialValue);
 
+  const changeRoute = useCallback(
+    curry(function (index, payload) {
+      merge(index, payload);
+    }),
+    []
+  );
+
   const changeSubroute = useCallback(
     curry(function (index, route, payload) {
       merge(index, {
         [route]: payload,
       });
     }),
-    [form]
+    []
   );
 
   const handleSubmit = () => {
-    mergeRoutes({ [editingRoute]: form.map(formRouteToRoute) });
+    mergeRoutes({
+      [editingRoute]: form.map(
+        isBodyPart ? formBodyPartRouteToRoute : formRouteToRoute
+      ),
+    });
     setEditingRoute("");
     reset();
   };
@@ -69,61 +111,55 @@ export default function RoutesModal() {
           {form.length > 0 ? (
             form.map((routes, index) => {
               const routeKey = `${editingRoute}-route-${index}`;
-              const routeKeys = Object.keys(routes);
+              const routeKeys = isBodyPart && Object.keys(routes);
               return (
                 <div
                   key={routeKey}
                   className="flex flex-col p-4 mb-4 border-2 rounded-md border-light-medium"
                 >
                   <div>
-                    <Button
-                      onClick={() =>
-                        add(
-                          index + 1,
-                          createFormRoute(createBodyPartRoute(editingRoute))
-                        )
-                      }
-                    >
+                    <Button onClick={handleAddRoute(index)}>
                       {t("bodyControls.route.add")}
                     </Button>
-                    <Button
-                      onClick={() =>
-                        add(index + 1, JSON.parse(JSON.stringify(routes)))
-                      }
-                    >
-                      Copy route
-                    </Button>
+                    <Button onClick={handleCopyRoute(index, routes)}>Copy route</Button>
                     <Button onClick={() => remove(index)}>
                       {t("bodyControls.route.delete")}
                     </Button>
                   </div>
-                  {routeKeys.map((route, routeIndex) => (
-                    <div
-                      key={`${routeKey}-${route}`}
-                      className={classnames({
-                        [classnames("border-b-2", "border-light-medium")]:
-                          routeIndex + 1 < routeKeys.length,
-                      })}
-                    >
-                      <RouteInput
-                        enabled={routes[route].enabled}
-                        onChange={changeSubroute(index, route)}
-                        route={route}
-                        routeKey={routeKey}
-                        routes={routes[route].route}
-                        to={routes[route].to}
-                      />
-                    </div>
-                  ))}
+                  {isBodyPart ? (
+                    routeKeys.map((route, routeIndex) => (
+                      <div
+                        key={`${routeKey}-${route}`}
+                        className={classnames({
+                          [classnames("border-b-2", "border-light-medium")]:
+                            routeIndex + 1 < routeKeys.length,
+                        })}
+                      >
+                        <RouteInput
+                          enabled={routes[route].enabled}
+                          onChange={changeSubroute(index, route)}
+                          route={route}
+                          routeKey={routeKey}
+                          routes={routes[route].route}
+                          to={routes[route].to}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <RouteInput
+                      enabled={routes.enabled}
+                      onChange={changeRoute(index)}
+                      route={editingRoute}
+                      routeKey={routeKey}
+                      routes={routes.route}
+                      to={routes.to}
+                    />
+                  )}
                 </div>
               );
             })
           ) : (
-            <Button
-              onClick={() =>
-                add(0, createFormRoute(createBodyPartRoute(editingRoute)))
-              }
-            >
+            <Button onClick={handleAddRoute(0)}>
               {t("bodyControls.route.add")}
             </Button>
           )}

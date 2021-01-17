@@ -10,14 +10,13 @@ import useToggle from "../../lib/hooks/useToggle";
 import useTranslation from "../../lib/hooks/useTranslation";
 import tailwind from "../../../tailwind.config";
 import { VIDEO } from "../../constants/video";
-import { FROM_MAPPER } from "../../constants/posenet";
 import { drawKeyPoints, drawSkeleton } from "../../utils/posenet";
-import { map } from "../../utils/p5";
 import { RoutesContext } from "../../context/RoutesContext";
 import { objectMap } from "../../utils/object";
 import { createRoute } from "../../utils/route";
 
 import Button from "../UI/Button";
+import { BASE_ROUTES } from "../../constants/routes";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
@@ -25,7 +24,7 @@ const defaultPort = 3333;
 
 export default function Camera() {
   const { t } = useTranslation();
-  const { routes } = useContext(RoutesContext);
+  const { routes, setEditingRoute } = useContext(RoutesContext);
   const posenet = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -33,8 +32,6 @@ export default function Camera() {
   const [camera, setCamera] = useState(0);
   const [oscPort, setOscPort] = useState(`${defaultPort}`);
   const [oscPortValue, setOscPortValue] = useState(defaultPort);
-  const [maxMapRGB, setMaxMapRGB] = useState(1000);
-  const [minMapRGB, setMinMapRGB] = useState(0);
   const [oscLoaded, , overrideOscLoaded] = useToggle();
   const [cameras, setCameras] = useState([]);
   const [minScore, setMinScore] = useState(0.3);
@@ -174,11 +171,16 @@ export default function Camera() {
           r /= pixels.length / 4;
           g /= pixels.length / 4;
           b /= pixels.length / 4;
-          r = map(r, 0, 255, minMapRGB, maxMapRGB);
-          g = map(g, 0, 255, minMapRGB, maxMapRGB);
-          b = map(b, 0, 255, minMapRGB, maxMapRGB);
-
-          // sendOSCMessage("/rgb", r, g, b);
+          routes.rgb.forEach((route) => {
+            const oscRoute = createRoute(route);
+            if (oscRoute.enabled)
+              sendOSCMessage(
+                `/${oscRoute.route}`,
+                oscRoute.message(r),
+                oscRoute.message(g),
+                oscRoute.message(b)
+              );
+          });
         } catch (e) {
           console.log(e);
         }
@@ -189,7 +191,14 @@ export default function Camera() {
           const { score, keypoints } = await net.estimateSinglePose(video, {
             flipHorizontal: true,
           });
-          // sendOSCMessage("/score", map(score, 0, 1, minMapScore, maxMapScore));
+          routes.score.forEach((route) => {
+            const oscScoreRoute = createRoute(route);
+            if (oscScoreRoute.enabled)
+              sendOSCMessage(
+                `/${oscScoreRoute.route}`,
+                oscScoreRoute.message(score)
+              );
+          });
           keypoints.forEach(
             ({ part, score: partScore, position: { x, y } }) => {
               const partRoutes = routes[part];
@@ -231,16 +240,7 @@ export default function Camera() {
         drawCamera();
       }
     }
-  }, [
-    cameraOn,
-    maxMapRGB,
-    minMapRGB,
-    minScore,
-    modelActive,
-    modelLoaded,
-    modelSkeleton,
-    routes,
-  ]);
+  }, [cameraOn, minScore, modelActive, modelLoaded, modelSkeleton, routes]);
 
   return (
     <div>
@@ -290,6 +290,13 @@ export default function Camera() {
             </>
           )}
         </div>
+        <div>
+          {Object.keys(BASE_ROUTES).map((route) => (
+            <Button key={route} onClick={() => setEditingRoute(route)}>
+              {t(`routes.${route}`)}
+            </Button>
+          ))}
+        </div>
         {/* <div className="flex justify-between w-full">
           <label className="cursor-pointer" htmlFor="min-score">
             Min tracking score:
@@ -329,33 +336,6 @@ export default function Camera() {
               {t("camera.controls.osc.setter")}
             </Button>
           </div>
-        </div>
-        <p>{t("camera.rgb.description")}</p>
-        <div className="flex items-center justify-between w-full my-4">
-          <label className="cursor-pointer" htmlFor="min-rgb">
-            {t("camera.rgb.map.min")}:
-          </label>
-          <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
-            id="min-rgb"
-            onChange={(event) => setMinMapRGB(event.target.value)}
-            step="1"
-            type="number"
-            value={minMapRGB}
-          />
-        </div>
-        <div className="flex items-center justify-between w-full my-4">
-          <label className="cursor-pointer" htmlFor="max-rgb">
-            {t("camera.rgb.map.max")}:
-          </label>
-          <input
-            className="p-2 transition-colors duration-300 ease-in-out border-2 rounded-md w-60 hover:text-light focus:text-light text-light-high bg-dark hover:border-white focus:border-white hover:bg-dark-100 border-dark-800"
-            id="max-rgb"
-            onChange={(event) => setMaxMapRGB(event.target.value)}
-            step="1"
-            type="number"
-            value={maxMapRGB}
-          />
         </div>
         <span>
           {t("camera.client.name")}:{" "}

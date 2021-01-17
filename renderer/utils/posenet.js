@@ -3,7 +3,7 @@
 
 import * as posenet from "@tensorflow-models/posenet";
 
-const pointRadius = 12;
+const pointRadius = 10;
 
 function toTuple({ x, y }) {
   return [x, y];

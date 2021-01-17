@@ -27,13 +27,13 @@ export const BODY_PARTS = {
   rightAnkle: "rightAnkle",
 };
 
-export const FROM_MAPPER = {
+export const BODY_FROM_MAPPER = {
   [BODY_PART.x]: { min: 0, max: VIDEO.width },
   [BODY_PART.y]: { min: 0, max: VIDEO.height },
   [BODY_PART.score]: { min: 0, max: 1 },
 };
 
-export const TO_MAPPER = {
+export const BODY_TO_MAPPER = {
   [BODY_PART.x]: { min: 0, max: 1000 },
   [BODY_PART.y]: { min: 0, max: 1000 },
   [BODY_PART.score]: { min: 0, max: 1 },
@@ -42,19 +42,19 @@ export const TO_MAPPER = {
 export function createBodyPartRoute(bodyPart) {
   return {
     [BODY_PART.x]: createDefaultRoute({
-      from: FROM_MAPPER[BODY_PART.x],
+      from: BODY_FROM_MAPPER[BODY_PART.x],
       route: `${bodyPart}/x`,
-      to: TO_MAPPER[BODY_PART.x],
+      to: BODY_TO_MAPPER[BODY_PART.x],
     }),
     [BODY_PART.y]: createDefaultRoute({
-      from: FROM_MAPPER[BODY_PART.y],
+      from: BODY_FROM_MAPPER[BODY_PART.y],
       route: `${bodyPart}/y`,
-      to: TO_MAPPER[BODY_PART.y],
+      to: BODY_TO_MAPPER[BODY_PART.y],
     }),
     [BODY_PART.score]: createDefaultRoute({
-      from: FROM_MAPPER[BODY_PART.score],
+      from: BODY_FROM_MAPPER[BODY_PART.score],
       route: `${bodyPart}/score`,
-      to: TO_MAPPER[BODY_PART.score],
+      to: BODY_TO_MAPPER[BODY_PART.score],
     }),
   };
 }
@@ -78,4 +78,3 @@ export const BODY_PARTS_ROUTES = {
   [BODY_PARTS.leftAnkle]: [createBodyPartRoute(BODY_PARTS.leftAnkle)],
   [BODY_PARTS.rightAnkle]: [createBodyPartRoute(BODY_PARTS.rightAnkle)],
 };
-
