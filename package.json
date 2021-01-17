@@ -6,7 +6,7 @@
   },
   "productName": "electron-osc-cam",
   "description": "",
-  "version": "0.0.6",
+  "version": "0.0.62",
   "main": "main/index.js",
   "scripts": {
     "generate-css-types": "tailwindcss-classnames --config tailwind.config.js",
