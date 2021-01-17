@@ -172,14 +172,15 @@ export default function Camera() {
           g /= pixels.length / 4;
           b /= pixels.length / 4;
           routes.rgb.forEach((route) => {
-            const oscRoute = createRoute(route);
-            if (oscRoute.enabled)
-              sendOSCMessage(
-                `/${oscRoute.route}`,
-                oscRoute.message(r),
-                oscRoute.message(g),
-                oscRoute.message(b)
-              );
+            if (route.enabled) {
+              const oscRoute = createRoute(route);
+                sendOSCMessage(
+                  `/${oscRoute.route}`,
+                  oscRoute.message(r),
+                  oscRoute.message(g),
+                  oscRoute.message(b)
+                );
+            }
           });
         } catch (e) {
           console.log(e);
@@ -192,12 +193,13 @@ export default function Camera() {
             flipHorizontal: true,
           });
           routes.score.forEach((route) => {
-            const oscScoreRoute = createRoute(route);
-            if (oscScoreRoute.enabled)
-              sendOSCMessage(
-                `/${oscScoreRoute.route}`,
-                oscScoreRoute.message(score)
-              );
+            if (route.enabled) {
+              const oscScoreRoute = createRoute(route);
+                sendOSCMessage(
+                  `/${oscScoreRoute.route}`,
+                  oscScoreRoute.message(score)
+                );
+            }
           });
           keypoints.forEach(
             ({ part, score: partScore, position: { x, y } }) => {
@@ -205,12 +207,13 @@ export default function Camera() {
               const bodyPart = { score: partScore, x, y };
               partRoutes.forEach((subroutes) => {
                 objectMap(subroutes, (subroute, key) => {
-                  const oscRoute = createRoute(subroute);
-                  if (oscRoute.enabled)
-                    sendOSCMessage(
-                      `/${oscRoute.route}`,
-                      oscRoute.message(bodyPart[key])
-                    );
+                  if (subroute.enabled) {
+                    const oscRoute = createRoute(subroute);
+                      sendOSCMessage(
+                        `/${oscRoute.route}`,
+                        oscRoute.message(bodyPart[key])
+                      );
+                  }
                 });
               });
             }
