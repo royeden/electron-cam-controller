@@ -4,7 +4,7 @@ import { createContext, useEffect, useRef, useState } from "react";
 import { defaultLocale } from "../../main/i18n/config";
 import translations from "../i18n/translations";
 import useToggle from "../lib/hooks/useToggle";
-import Loader from "../components/Loader";
+import Loader from "../components/UI/Loader";
 import I18N_EVENTS from "../../main/events/i18n";
 
 const i18n = rosetta(translations);

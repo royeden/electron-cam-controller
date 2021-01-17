@@ -1,30 +1,30 @@
 import { useCallback, useContext, useMemo } from "react";
 import { classnames } from "tailwindcss-classnames";
 
-import { BodyPartsContext } from "../context/BodyPartsContext";
-import useObjectListState from "../lib/hooks/useObjectListState";
-import usePreviousIf from "../lib/hooks/usePreviousIf";
-import useTranslation from "../lib/hooks/useTranslation";
-import { curry } from "../utils/fp";
+import Button from "../UI/Button";
+import Modal from "../UI/Modal";
+import useObjectListState from "../../lib/hooks/useObjectListState";
+import usePreviousIf from "../../lib/hooks/usePreviousIf";
+import useTranslation from "../../lib/hooks/useTranslation";
+import { RoutesContext } from "../../context/RoutesContext";
+import { createBodyPartRoute } from "../../constants/posenet";
 import {
-  createBodyPartRoute,
   createFormRoute,
   formRouteToRoute,
-} from "../utils/route";
-import Button from "./Button";
+} from "../../utils/route";
+import { curry } from "../../utils/fp";
 
-import Modal from "./Modal";
 import RouteInput from "./RouteInput";
 
-export default function BodyPartModal() {
+export default function RoutesModal() {
   const { t } = useTranslation();
-  const { bodyParts, editingPart, setEditingPart, mergeBodyParts } = useContext(
-    BodyPartsContext
+  const { routes, editingRoute, setEditingRoute, mergeRoutes } = useContext(
+    RoutesContext
   );
-  const header = usePreviousIf(editingPart, "");
+  const header = usePreviousIf(editingRoute, "");
   const initialValue = useMemo(
-    () => (editingPart ? bodyParts[editingPart].map(createFormRoute) : []),
-    [bodyParts, editingPart]
+    () => (editingRoute ? routes[editingRoute].map(createFormRoute) : []),
+    [routes, editingRoute]
   );
 
   const [form, { add, merge, remove, set }] = useObjectListState(initialValue);
@@ -48,27 +48,27 @@ export default function BodyPartModal() {
   );
 
   const handleSubmit = () => {
-    mergeBodyParts({ [editingPart]: form.map(formRouteToRoute) });
-    setEditingPart("");
+    mergeRoutes({ [editingRoute]: form.map(formRouteToRoute) });
+    setEditingRoute("");
     reset();
   };
 
   return (
     <Modal
-      contentLabel={t(`bodyParts.${editingPart}`)}
+      contentLabel={t(`routes.${editingRoute}`)}
       className="w-2/3 max-w-full p-8 mx-6 overflow-hidden lg:w-1/2 h-2/3 min-w-min"
-      visible={Boolean(editingPart)}
-      onRequestClose={() => setEditingPart("")}
+      visible={Boolean(editingRoute)}
+      onRequestClose={() => setEditingRoute("")}
     >
       <div className="flex flex-col h-full">
         <h1 className="text-xl font-bold tracking-wide">
-          {t(`bodyParts.${header}`)}
+          {t(`routes.${header}`)}
         </h1>
         <p>Changed: {`${hasChanged}`}</p>
         <div className="h-full pt-2 pr-4 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-secondary-DEFAULT">
           {form.length > 0 ? (
             form.map((routes, index) => {
-              const routeKey = `${editingPart}-route-${index}`;
+              const routeKey = `${editingRoute}-route-${index}`;
               const routeKeys = Object.keys(routes);
               return (
                 <div
@@ -80,7 +80,7 @@ export default function BodyPartModal() {
                       onClick={() =>
                         add(
                           index + 1,
-                          createFormRoute(createBodyPartRoute(editingPart))
+                          createFormRoute(createBodyPartRoute(editingRoute))
                         )
                       }
                     >
@@ -121,7 +121,7 @@ export default function BodyPartModal() {
           ) : (
             <Button
               onClick={() =>
-                add(0, createFormRoute(createBodyPartRoute(editingPart)))
+                add(0, createFormRoute(createBodyPartRoute(editingRoute)))
               }
             >
               {t("bodyControls.route.add")}

@@ -1,10 +1,10 @@
 import Tippy from "@tippyjs/react";
 import { useContext } from "react";
 
-import { BODY_PARTS } from "../constants/posenet";
-import { BodyPartsContext } from "../context/BodyPartsContext";
+import { BODY_PARTS } from "../../constants/posenet";
+import { RoutesContext } from "../../context/RoutesContext";
 import Skeleton from "./Skeleton";
-import useTranslation from "../lib/hooks/useTranslation";
+import useTranslation from "../../lib/hooks/useTranslation";
 
 function EditBodyPart({
   bodyPart,
@@ -103,7 +103,7 @@ const EDIT_BODY_PART_PROPS = {
 };
 
 export default function BodyControls() {
-  const { setEditingPart } = useContext(BodyPartsContext);
+  const { setEditingRoute } = useContext(RoutesContext);
   return (
     <div className="relative">
       <div className="absolute grid w-full h-full gap-1 grid-cols-24 grid-rows-24">
@@ -112,7 +112,7 @@ export default function BodyControls() {
             key={bodyPart}
             bodyPart={bodyPart}
             className={EDIT_BODY_PART_PROPS[bodyPart].className}
-            onClick={setEditingPart}
+            onClick={setEditingRoute}
             placement={EDIT_BODY_PART_PROPS[bodyPart].placement}
           />
         ))}

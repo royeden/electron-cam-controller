@@ -1,6 +1,6 @@
 // https://commons.wikimedia.org/wiki/File:Skeleton_anterior.svg
 
-import tailwind from "../../tailwind.config";
+import tailwind from "../../../tailwind.config";
 
 export default function Skeleton() {
   return (

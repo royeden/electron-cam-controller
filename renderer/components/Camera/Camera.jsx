@@ -4,20 +4,20 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import * as poseNet from "@tensorflow-models/posenet";
 import "@tensorflow/tfjs-backend-webgl";
 
-import OSC_EVENTS from "../../main/events/osc";
-import useAnimationFrame from "../lib/hooks/useAnimationFrame";
-import useToggle from "../lib/hooks/useToggle";
-import useTranslation from "../lib/hooks/useTranslation";
-import tailwind from "../../tailwind.config";
-import { VIDEO } from "../constants/video";
-import { FROM_MAPPER } from "../constants/posenet";
-import { drawKeyPoints, drawSkeleton } from "../utils/posenet";
-import { map } from "../utils/p5";
-import { BodyPartsContext } from "../context/BodyPartsContext";
-import { objectMap } from "../utils/object";
-import { createRoute } from "../utils/route";
+import OSC_EVENTS from "../../../main/events/osc";
+import useAnimationFrame from "../../lib/hooks/useAnimationFrame";
+import useToggle from "../../lib/hooks/useToggle";
+import useTranslation from "../../lib/hooks/useTranslation";
+import tailwind from "../../../tailwind.config";
+import { VIDEO } from "../../constants/video";
+import { FROM_MAPPER } from "../../constants/posenet";
+import { drawKeyPoints, drawSkeleton } from "../../utils/posenet";
+import { map } from "../../utils/p5";
+import { RoutesContext } from "../../context/RoutesContext";
+import { objectMap } from "../../utils/object";
+import { createRoute } from "../../utils/route";
 
-import Button from "./Button";
+import Button from "../UI/Button";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
@@ -25,7 +25,7 @@ const defaultPort = 3333;
 
 export default function Camera() {
   const { t } = useTranslation();
-  const { bodyParts } = useContext(BodyPartsContext);
+  const { routes } = useContext(RoutesContext);
   const posenet = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -192,9 +192,9 @@ export default function Camera() {
           // sendOSCMessage("/score", map(score, 0, 1, minMapScore, maxMapScore));
           keypoints.forEach(
             ({ part, score: partScore, position: { x, y } }) => {
-              const routes = bodyParts[part];
+              const partRoutes = routes[part];
               const bodyPart = { score: partScore, x, y };
-              routes.forEach((subroutes) => {
+              partRoutes.forEach((subroutes) => {
                 objectMap(subroutes, (subroute, key) => {
                   const oscRoute = createRoute(subroute);
                   if (oscRoute.enabled)
@@ -232,7 +232,6 @@ export default function Camera() {
       }
     }
   }, [
-    bodyParts,
     cameraOn,
     maxMapRGB,
     minMapRGB,
@@ -240,6 +239,7 @@ export default function Camera() {
     modelActive,
     modelLoaded,
     modelSkeleton,
+    routes,
   ]);
 
   return (

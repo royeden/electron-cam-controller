@@ -1,18 +1,17 @@
 import Tippy from "@tippyjs/react";
-import { useCallback, useMemo } from "react";
 import { classnames } from "tailwindcss-classnames";
+import { useCallback, useMemo } from "react";
 
-import useTranslation from "../lib/hooks/useTranslation";
+import Icon from "../UI/Icon";
+import Input from "../UI/Input";
+import Toggle from "../UI/Toggle";
+import useTranslation from "../../lib/hooks/useTranslation";
 import {
   insertArrayValue,
   modifyArrayValue,
   removeArrayValue,
-} from "../utils/array";
-import { curry } from "../utils/fp";
-
-import Icon from "./Icon";
-import Input from "./Input";
-import Toggle from "./Toggle";
+} from "../../utils/array";
+import { curry } from "../../utils/fp";
 
 const buttonInteractions = classnames("hover:border-light", "hover:text-light");
 

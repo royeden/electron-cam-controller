@@ -1,4 +1,4 @@
-import { createBodyPartRoute } from "../utils/route";
+import { createDefaultRoute } from "../utils/route";
 import { VIDEO } from "./video";
 
 export const BODY_PART = {
@@ -39,6 +39,26 @@ export const TO_MAPPER = {
   [BODY_PART.score]: { min: 0, max: 1 },
 };
 
+export function createBodyPartRoute(bodyPart) {
+  return {
+    [BODY_PART.x]: createDefaultRoute({
+      from: FROM_MAPPER[BODY_PART.x],
+      route: `${bodyPart}/x`,
+      to: TO_MAPPER[BODY_PART.x],
+    }),
+    [BODY_PART.y]: createDefaultRoute({
+      from: FROM_MAPPER[BODY_PART.y],
+      route: `${bodyPart}/y`,
+      to: TO_MAPPER[BODY_PART.y],
+    }),
+    [BODY_PART.score]: createDefaultRoute({
+      from: FROM_MAPPER[BODY_PART.score],
+      route: `${bodyPart}/score`,
+      to: TO_MAPPER[BODY_PART.score],
+    }),
+  };
+}
+
 export const BODY_PARTS_ROUTES = {
   [BODY_PARTS.nose]: [createBodyPartRoute(BODY_PARTS.nose)],
   [BODY_PARTS.leftEye]: [createBodyPartRoute(BODY_PARTS.leftEye)],
@@ -58,3 +78,4 @@ export const BODY_PARTS_ROUTES = {
   [BODY_PARTS.leftAnkle]: [createBodyPartRoute(BODY_PARTS.leftAnkle)],
   [BODY_PARTS.rightAnkle]: [createBodyPartRoute(BODY_PARTS.rightAnkle)],
 };
+
