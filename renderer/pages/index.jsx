@@ -12,9 +12,9 @@ const Home = () => {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen text-white bg-dark">
       <RoutesModal key={key} />
-      <div className="flex items-center justify-around w-full">
-        <BodyControls />
+      <div className="flex flex-row-reverse items-center justify-around w-full">
         <Camera />
+        <BodyControls />
       </div>
     </main>
   );

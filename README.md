@@ -1,4 +1,4 @@
-# Electron OSC Cam
+# Electron Camera Controller
 
 * [En Español](#español)
 * [~~In English~~](#english) (This will be added in the future).
@@ -9,13 +9,43 @@
 
 Este proyecto nació de la idea de portear a todas las plataformas posibles otro proyecto con un propósito similar: [Processing RGB OSC](https://github.com/royeden/processing-rgb-osc). Luego se lo combinó con algunas funcionalidades inspiradas de este otro proyecto:  [React & Tensorflow Body Motion Synth](https://motion-synth.netlify.app/).
 
-Las funcionalidades incluídas son las siguientes (dependen todas de la cámara web, la cual está desactivada por defecto).
+El objetivo de este proyecto es crear un controlador con la cámara web que se pueda conectar con cualquier app vía OSC (UDP) y próximamente tal vez otros protocolos como MIDI o TCP.
 
-* Puerto OSC de envío de datos (configurable, por defecto el puerto es el `3333`).
-* En base al feed de la cámara, calcula el promedio de colores y lo envía vía OSC a la ruta `/rgb`. El mensaje consta de los tres valores independientes de `r`, `g` y `b`, transformados entre los valores especificados en la aplicación (por defecto, entre `0` y `1000`).
-* Una vez que el modelo de posenet (inteligencia artificial para determinar poses del cuerpo) este cargado, se puede habilitar para que envíe los parámetros de las poses detectadas vía OSC: La ruta `/score` recibe a puntuación total de certeza de que se encuentra una parte del cuerpo en la cámara, el valor es transformado entre los valores especificados en la aplicación (por defecto, entre `0` y `1000`). También envía información a rutas de cada parte independiente que detecta el modelo, esas posibles rutas son: `/nose, /leftEye, /rightEye, /leftEar, /rightEar, /leftShoulder, /rightShoulder, /leftElbow, /rightElbow, /leftWrist, /rightWrist, /leftHip, /rightHip, /leftKnee, /rightKnee, /leftAnkle, /rightAnkle`, las cuales tienen a su vez las siguientes subrutas: `/score, /x, /y`, las cuales determinan la certeza de que la parte aparezca en cámara, posición en el eje X (de izquierda a derecha) y posición en el eje Y (de arriba a abajo) de las partes del cuerpo detectadas respectivamente, transformadas entre los valores especificados en la aplicación (por defecto, entre `0` y `1000`).
+## Instrucciones de uso
 
-* Una vez habilitado el modelo, se puede habilitar la opición que muestra el esqueleto que el modelo está procesando (a veces deibuja cruces entre las líneas, pero lo que importa son los puntos, no las líneas). Hay un slider de rango que permite controlar a partir de qué porcentaje de certeza debería dibujar las líneas (y que próximamente puede que se use para otras cosas :) ).
+\* _Todas las funcionalidades de la app dependen del uso de la cámara web, la cual está desactivada por defecto._
+
+La interfaz se divide en 2 partes: La sección de controles de rutas y la sección de la cámara que controla la cámara web y el trackeo.
+
+### Cámara:
+
+En esta sección se encuentra la configuración del puerto OSC, la cual permite cambiar el número de puerto donde se están enviando los datos (por defecto es el puerto `3333`).
+
+También se encuentran los controles que permiten activar/cambiar la cámara web seleccionada, así como habilitar/deshabilitar el trackeo de poses y mostrar/ocultar el esqueleto que da feedback del trackeo en pantalla (a veces dibuja cruces entre las líneas, pero lo que importa son los puntos, no las líneas :) ).
+
+Por último, hay una sección que indica el estado del puerto OSC así como del trackeo de la inteligencia artificial.
+
+### Configuración de rutas
+
+En esta sección se encuentran los controles para configurar las distintas rutas asociadas a las partes del cuerpo, así como las de certeza de la presencia de un cuerpo en la imagen de la cámara y un cálculo del color promedio en la cámara.
+
+Las rutas configuradas por defecto y los valores que se envían son los siguientes:
+* `/rgb` (color promedio de la imagen siendo capturada por la cámara): valor `r`, valor `g` y valor `b`, todos entre 0 y 1000 (esto se puede ajustar en la configuración de RGB).
+* `/score` (nivel de certeza de que hay una persona siendo capturada por la cámara): valor entre 0 y 1 (esto se puede ajustar en la configuración de puntaje).
+* `/nose, /leftEye, /rightEye, /leftEar, /rightEar, /leftShoulder, /rightShoulder, /leftElbow, /rightElbow, /leftWrist, /rightWrist, /leftHip, /rightHip, /leftKnee, /rightKnee, /leftAnkle, /rightAnkle`: cada una corresponde a una parte del cuerpo y tienen las siguientes sub-rutas:
+  * `/score` (nivel de certeza de que la parte del cuerpo está siendo capturada por la cámara): valor entre 0 y 1.
+  * `/x` (posición de la parte del cuerpo en un eje x horizontal arbitrario de coordenadas): valor entre 0 y 1000, yendo de izquierda a derecha.
+  * `/y` (posición de la parte del cuerpo en un eje y vertical arbitrario de coordenadas): valor entre 0 y 1000, yendo de arriba hacia abajo.
+
+Todas estas rutas y mapeos son configurables desde el esqueleto, tocando el botón de la parte del cuerpo que se quiere editar.
+
+## Funcionalidades incluídas:
+
+* Puerto OSC configurable.
+* Traducciones (Inglés y Español).
+* Cálculo del valor promedio de RGB en el Stream de la cámara web.
+* Capacidad de trackeo del cuerpo con la cámara web y utilización de los valores para distintas funcionalidades.
+* Rutas configurables con distintos tipos de mapeos y funcionalidades disponibles.
 
 ## Plataformas soportadas:
 
@@ -43,6 +73,7 @@ Este proyecto fue creado a partir de un `template` disponible [acá](https://git
 * [Tailwind](https://tailwindcss.com/) para organizar los estilos de la aplicación.
 
 * [osc-js](https://github.com/colinbdclark/osc.js/) para el envío de datos vía osc.
+
 ### Guías y agradecimientos:
 
 * Integrar Posenet con React: https://medium.com/@kirstenlindsmith/translating-posenet-into-react-js-58f438c8605d
@@ -50,8 +81,6 @@ Este proyecto fue creado a partir de un `template` disponible [acá](https://git
 * Como usar los procesos de main y renderer en electron: https://richiepineda.medium.com/using-electrons-ipcrenderer-and-ipcmain-to-create-a-server-less-desktop-application-751cc5f26a0d
 
 * [P5.js](https://github.com/processing/p5.js), una excelente librería open-source para el manejo de canvas, lamentablemente generaba lag con React y tuve que reimplementar algunas funcionalidades que vienen directamente del código de p5 <3
-
-
 
 ## Como desarrollar localmente
 
@@ -126,18 +155,20 @@ Para generar una versión del proyecto para las plataformas soportadas (Windows 
 
 ## Roadmap (lo que se viene):
 
-- [] Agregar traducciones de los controles de la app a español (In progress).
+- [x] ~Agregar traducciones de los controles de la app a español.~
+- [] Optimizar el envío de datos y tracking / tracking configurable (modo frame by frame, modo cada x cantidad de tiempo, modo idle para reducir el impacto de CPU).
 - [] Agregar linters, reforzar un estilo de código y validar posibles errores.
 - [] Agregar git-hooks.
 - [] Permitir cambiar la cámara que se está usando.
-- [] Permitir que todas las funciones de la aplicación sea controlable por OSC.
-- [] Agregar ejemplos.
-- [] Rediseñar la UI (interfaz de usuarix) para un diseño más limpio.
+- [] Permitir que todas las funciones de la aplicación sean controlables por OSC.
+- [] Agregar más ejemplos y templates en JSON.
+- [] Rediseñar la UI (interfaz de usuarix) para un diseño más limpio (In progress).
 - [] Agregar tutoriales.
-- [] Identificar poses fuera del rango de la cámara?
+- [] Permitir identificar poses fuera del rango de la cámara?
 - [] Configurar prefijos y sufijos para los mensajes de OSC?
 - [] Establecer rangos dinámicos de acciones?
 - [] Guardar y cargar configuración en un JSON
+- [] Agregar configuración para la cámara web.
 - [] Permitir transformar los valores de OSC (redondear a números enteros / posiciones decimales). (In progress)
 - [] Identificar poses fuera del rango de la cámara? (In progress)
 - [x] ~Rutas configurables para el envío de OSC?~
@@ -150,5 +181,11 @@ Para generar una versión del proyecto para las plataformas soportadas (Windows 
 * Cualquier ejemplo en distintas plataformas es apreciado, no te olvides de hacer un fork y [dejar tu PR](https://github.com/royeden/electron-osc-cam/pulls) :) . Los ejemplos se van a encontrar en la carpeta `examples`.
 
 * Cualquier contribución adicional al código es un montón y se super aprecia. Por ahora no está todo muy listo para reforzar estándares de código, pero esperemos que pronto se pueda usar.
+
+## Posibles problemas y sus posibles soluciones:
+
+* La aplicación está lenta / tiene mucho delay:
+  * Esto probablemente se deba al trackeo de la aplicación. Está pensado para funcionar con GPU, pero puede correrse con la CPU (en mi caso, se corre en la CPU ya que no tengo placa gráfica y funciona). Lo mejor que se puede hacer es no utilizar muchas aplicaciones en conjunto en estos casos ya que puede generar delay de procesamiento. Esto ya está tomado en consideración para que en una versión futura sea posible configurar cuanto queremos dejar que consuma / impacte la aplicación en memoria y procesamiento (ver roadmap).
+  * Puede ser que hayan muchas rutas configuradas y esto genere delay al procesarlas, estaría también atado al problema de no poder ajustar un intervalo para enviar la información, y será también ajustado en una versión futura. Tal vez la única forma temporal de mitigarlo sea dejando un límite de rutas configurables por parte del cuerpo. Esto también se puede llegar a mitigar si se deshabilitan las rutas que no están siendo utilizadas, ya que demoran menos en procesarse si están desactivadas.
 
 # ~~English~~ 

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import ReactModal from "react-modal";
 
 export default function Modal({
@@ -11,7 +10,7 @@ export default function Modal({
   return (
     <>
       <ReactModal
-        className={`${className} outline-none rounded-xl bg-dark-200 text-light`}
+        className={`${className} outline-none rounded-xl bg-dark-100 text-light`}
         overlayClassName="fixed bg-opacity-80 inset-0 bg-dark flex items-center justify-center"
         closeTimeoutMS={300}
         isOpen={visible}

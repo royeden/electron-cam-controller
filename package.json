@@ -1,10 +1,10 @@
 {
-  "name": "electron-osc-cam",
+  "name": "electron-camera-controller",
   "author": {
     "name": "Roy Eden",
     "email": "roy.ede@gmail.com"
   },
-  "productName": "electron-osc-cam",
+  "productName": "electron-camera-controller",
   "description": "",
   "version": "0.0.62",
   "main": "main/index.js",
@@ -20,7 +20,7 @@
     "dist": "npm run build && electron-builder"
   },
   "build": {
-    "productName": "electron-osc-cam",
+    "productName": "electron-camera-controller",
     "files": [
       "main",
       "renderer/out"
@@ -58,8 +58,10 @@
     "electron-is-dev": "^1.1.0",
     "electron-next": "^3.1.5",
     "osc-js": "^2.1.0",
+    "react-hot-toast": "^1.0.1",
     "react-icons": "^4.1.0",
     "react-modal": "^3.12.1",
+    "react-transition-group": "^4.4.1",
     "react-uid": "^2.3.1",
     "rosetta": "^1.1.0",
     "tailwindcss-classnames": "^1.9.0"

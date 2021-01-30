@@ -26,7 +26,11 @@
     },
     "route": {
       "add": "Add route",
-      "delete": "Delete route"
+      "copy": "Copy route",
+      "delete": "Delete route",
+      "edit": "Edit route",
+      "reset": "Reset all changes",
+      "save": "Save route"
     },
     "subroute": {
       "add": "Add subroute",

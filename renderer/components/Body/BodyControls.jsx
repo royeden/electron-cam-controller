@@ -1,35 +1,13 @@
-import Tippy from "@tippyjs/react";
 import { useContext } from "react";
 
+import Button from "../UI/Button";
+import useTranslation from "../../lib/hooks/useTranslation";
+import { BASE_ROUTES } from "../../constants/routes";
 import { BODY_PARTS } from "../../constants/posenet";
 import { RoutesContext } from "../../context/RoutesContext";
-import Skeleton from "./Skeleton";
-import useTranslation from "../../lib/hooks/useTranslation";
 
-function EditBodyPart({
-  bodyPart,
-  className = "",
-  onClick,
-  placement = "top",
-}) {
-  const { t } = useTranslation();
-  return (
-    <div className={`${className} h-full w-full`}>
-      <Tippy
-        animation="shift-away"
-        arrow
-        className="w-full h-full outline-none focus:outline-none"
-        content={t(`routes.${bodyPart}`)}
-        placement={placement}
-      >
-        <button
-          className="w-2 h-2 transition-all duration-300 ease-in-out transform scale-150 rounded-full outline-none focus:outline-none hover:bg-pallete-complimentary focus:bg-pallete-complimentary hover:scale-225 focus:scale-225 bg-pallete-triadic2"
-          onClick={() => onClick(bodyPart)}
-        ></button>
-      </Tippy>
-    </div>
-  );
-}
+import EditBodyPart from "./EditBodyPart";
+import Skeleton from "./Skeleton";
 
 const EDIT_BODY_PART_PROPS = {
   [BODY_PARTS.leftEar]: {
@@ -103,21 +81,32 @@ const EDIT_BODY_PART_PROPS = {
 };
 
 export default function BodyControls() {
+  const { t } = useTranslation();
   const { setEditingRoute } = useContext(RoutesContext);
   return (
-    <div className="relative">
-      <div className="absolute grid w-full h-full gap-1 grid-cols-24 grid-rows-24">
-        {Object.keys(BODY_PARTS).map((bodyPart) => (
-          <EditBodyPart
-            key={bodyPart}
-            bodyPart={bodyPart}
-            className={EDIT_BODY_PART_PROPS[bodyPart].className}
-            onClick={setEditingRoute}
-            placement={EDIT_BODY_PART_PROPS[bodyPart].placement}
-          />
+    <div>
+      <h1>Edit body part routes:</h1>
+      <div className="relative my-8">
+        <div className="absolute grid w-full h-full gap-1 grid-cols-24 grid-rows-24">
+          {Object.keys(BODY_PARTS).map((bodyPart) => (
+            <EditBodyPart
+              key={bodyPart}
+              bodyPart={bodyPart}
+              className={EDIT_BODY_PART_PROPS[bodyPart].className}
+              placement={EDIT_BODY_PART_PROPS[bodyPart].placement}
+            />
+          ))}
+        </div>
+        <Skeleton />
+      </div>
+      <h1>Edit other routes:</h1>
+      <div className="flex justify-between w-full">
+        {Object.keys(BASE_ROUTES).map((route) => (
+          <Button key={route} onClick={() => setEditingRoute(route)}>
+            {t(`routes.${route}`)}
+          </Button>
         ))}
       </div>
-      <Skeleton />
     </div>
   );
 }

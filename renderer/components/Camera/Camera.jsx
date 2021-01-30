@@ -16,7 +16,6 @@ import { objectMap } from "../../utils/object";
 import { createRoute } from "../../utils/route";
 
 import Button from "../UI/Button";
-import { BASE_ROUTES } from "../../constants/routes";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
@@ -24,7 +23,7 @@ const defaultPort = 3333;
 
 export default function Camera() {
   const { t } = useTranslation();
-  const { routes, setEditingRoute } = useContext(RoutesContext);
+  const { routes } = useContext(RoutesContext);
   const posenet = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -174,12 +173,12 @@ export default function Camera() {
           routes.rgb.forEach((route) => {
             if (route.enabled) {
               const oscRoute = createRoute(route);
-                sendOSCMessage(
-                  `/${oscRoute.route}`,
-                  oscRoute.message(r),
-                  oscRoute.message(g),
-                  oscRoute.message(b)
-                );
+              sendOSCMessage(
+                `/${oscRoute.route}`,
+                oscRoute.message(r),
+                oscRoute.message(g),
+                oscRoute.message(b)
+              );
             }
           });
         } catch (e) {
@@ -195,10 +194,10 @@ export default function Camera() {
           routes.score.forEach((route) => {
             if (route.enabled) {
               const oscScoreRoute = createRoute(route);
-                sendOSCMessage(
-                  `/${oscScoreRoute.route}`,
-                  oscScoreRoute.message(score)
-                );
+              sendOSCMessage(
+                `/${oscScoreRoute.route}`,
+                oscScoreRoute.message(score)
+              );
             }
           });
           keypoints.forEach(
@@ -209,10 +208,10 @@ export default function Camera() {
                 objectMap(subroutes, (subroute, key) => {
                   if (subroute.enabled) {
                     const oscRoute = createRoute(subroute);
-                      sendOSCMessage(
-                        `/${oscRoute.route}`,
-                        oscRoute.message(bodyPart[key])
-                      );
+                    sendOSCMessage(
+                      `/${oscRoute.route}`,
+                      oscRoute.message(bodyPart[key])
+                    );
                   }
                 });
               });
@@ -246,13 +245,34 @@ export default function Camera() {
   }, [cameraOn, minScore, modelActive, modelLoaded, modelSkeleton, routes]);
 
   return (
-    <div>
+    <div className="w-1/2">
       <video className="hidden" playsInline ref={videoRef} />
-      <canvas className="max-w-full" ref={canvasRef} />
+      <canvas className="w-full" ref={canvasRef} />
+
       <div className="flex flex-col w-full max-w-screen-md ">
         <div className="flex flex-col items-center my-4">
           {cameraOn ? (
             <div className="flex justify-between w-full">
+              <Button
+                title={"Change camera"}
+                onClick={async () => {
+                  if (modelActive) toggleModelActive();
+                  const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                      deviceId: cameras[camera].deviceId,
+                      width: VIDEO.width,
+                      height: VIDEO.height,
+                    },
+                  });
+                  stream.getTracks().forEach((track) => track.stop());
+                  setCamera((prevCamera) =>
+                    prevCamera === cameras.length - 1 ? 0 : prevCamera + 1
+                  );
+                }}
+              >
+                Change camera to camera{" "}
+                {`${camera === cameras.length - 1 ? 0 : camera + 1}`}
+              </Button>
               <Button
                 disabled={!modelLoaded}
                 title={
@@ -292,13 +312,6 @@ export default function Camera() {
               </Button>
             </>
           )}
-        </div>
-        <div>
-          {Object.keys(BASE_ROUTES).map((route) => (
-            <Button key={route} onClick={() => setEditingRoute(route)}>
-              {t(`routes.${route}`)}
-            </Button>
-          ))}
         </div>
         {/* <div className="flex justify-between w-full">
           <label className="cursor-pointer" htmlFor="min-score">

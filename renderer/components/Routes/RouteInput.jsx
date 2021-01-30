@@ -1,8 +1,6 @@
-import Tippy from "@tippyjs/react";
 import { classnames } from "tailwindcss-classnames";
 import { useCallback, useMemo } from "react";
 
-import Icon from "../UI/Icon";
 import Input from "../UI/Input";
 import Toggle from "../UI/Toggle";
 import useTranslation from "../../lib/hooks/useTranslation";
@@ -12,20 +10,22 @@ import {
   removeArrayValue,
 } from "../../utils/array";
 import { curry } from "../../utils/fp";
+import IconButton from "../UI/IconButton";
 
-const buttonInteractions = classnames("hover:border-light", "hover:text-light");
+const buttonInteractions = classnames("hover:fill-light", "hover:text-light");
 
 const buttonClass = classnames(
   "p-1",
   "mx-2",
+  "h-8",
+  "w-8",
   "transition-colors",
   "duration-300",
-  "border-2",
   "rounded-full",
-  "border-light-medium",
+  "fill-light-medium",
   "text-light-medium",
   "outline-none",
-  "focus:border-light",
+  "focus:fill-light",
   "focus:outline-none",
   "focus:text-light"
 );
@@ -85,48 +85,36 @@ export default function RouteInput({
           >
             <span>/</span>
             {index > 0 && (
-              <Tippy
-                animation="shift-away"
-                arrow
-                content={t("bodyControls.subroute.delete")}
-                placement="top"
-              >
-                <button
-                  aria-label={t("bodyControls.subroute.delete")}
-                  className={classnames(buttonClass, buttonInteractions)}
-                  onClick={() => handleDeleteRoute(index)}
-                  title={t("bodyControls.subroute.delete")}
-                  type="button"
-                >
-                  <Icon type="close" />
-                </button>
-              </Tippy>
+              <IconButton
+                button={{
+                  "aria-label": t("bodyControls.subroute.delete"),
+                  className: classnames(buttonClass, buttonInteractions),
+                }}
+                className="w-full h-full"
+                onClick={() => handleDeleteRoute(index)}
+                title={t("bodyControls.subroute.delete")}
+                type="remove-outline"
+              />
             )}
             <Input
               error={!subroute}
               onChange={handleChangeRoute(index)}
               value={subroute}
             />
-            <Tippy
-              animation="shift-away"
-              arrow
-              content={t("bodyControls.subroute.add")}
-              placement="top"
-            >
-              <button
-                aria-label={t("bodyControls.subroute.add")}
-                className={classnames(buttonClass, {
+            <IconButton
+              button={{
+                "aria-label": t("bodyControls.subroute.add"),
+                className: classnames(buttonClass, {
                   "cursor-not-allowed": !valid,
                   [buttonInteractions]: valid,
-                })}
-                disabled={!valid}
-                onClick={() => handleAddRoute(index)}
-                title={t("bodyControls.subroute.add")}
-                type="button"
-              >
-                <Icon type="add" />
-              </button>
-            </Tippy>
+                }),
+              }}
+              className="w-full h-full"
+              disabled={!valid}
+              onClick={() => handleAddRoute(index)}
+              title={t("bodyControls.subroute.add")}
+              type="add-outline"
+            />
           </div>
         ))}
       </div>

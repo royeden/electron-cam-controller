@@ -2,7 +2,10 @@ import {
   MdAdd,
   MdAddCircle,
   MdAddCircleOutline,
+  MdAutorenew,
   MdClose,
+  MdContentCopy,
+  MdDelete,
   MdEdit,
   MdRedo,
   MdRemove,
@@ -11,17 +14,21 @@ import {
   MdSave,
   MdUndo,
 } from "react-icons/md";
+import { classnames } from "tailwindcss-classnames";
 
 const ICON_MAP = {
   add: MdAdd,
   "add-circle": MdAddCircle,
   "add-outline": MdAddCircleOutline,
   close: MdClose,
+  copy: MdContentCopy,
+  delete: MdDelete,
   edit: MdEdit,
   redo: MdRedo,
   remove: MdRemove,
   "remove-circle": MdRemoveCircle,
   "remove-outline": MdRemoveCircleOutline,
+  reset: MdAutorenew,
   save: MdSave,
   undo: MdUndo,
 };
@@ -36,12 +43,12 @@ export default function Icon({
   const MappedIcon = ICON_MAP[type];
   return (
     <span
-      className={className}
+      className={classnames(className, "block")}
       title={title}
       role="img"
       aria-label={aria_label}
     >
-      <MappedIcon {...props} />
+      <MappedIcon className="w-full h-full" {...props} />
     </span>
   );
 }
