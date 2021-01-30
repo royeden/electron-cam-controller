@@ -1,12 +1,12 @@
-import { idempotence } from "./fp";
+import { identity } from "./fp";
 import { map } from "./p5";
-import { objectMap } from "./object";
+import { map as objectMap } from "./object";
 
 export function createRoute({
   constrain = true,
   enabled = true,
   route = "",
-  transformer = idempotence,
+  transformer = identity,
   from = { min: 0, max: 1 },
   to = { min: 0, max: 1 },
 }) {
@@ -21,11 +21,10 @@ export function createRoute({
   };
 }
 
-export function createDefaultRoute({ from, route, to }) {
+export function createDefaultRoute({ route, to }) {
   return {
     constrain: true,
     enabled: true,
-    from,
     route,
     to,
   };

@@ -5,9 +5,9 @@ import Input from "../UI/Input";
 import Toggle from "../UI/Toggle";
 import useTranslation from "../../lib/hooks/useTranslation";
 import {
-  insertArrayValue,
-  modifyArrayValue,
-  removeArrayValue,
+  insert,
+  modify,
+  remove,
 } from "../../utils/array";
 import { curry } from "../../utils/fp";
 import IconButton from "../UI/IconButton";
@@ -46,19 +46,19 @@ export default function RouteInput({
   );
 
   const handleAddRoute = useCallback(
-    (index) => onChange({ route: insertArrayValue(routes, index + 1, "") }),
+    (index) => onChange({ route: insert(routes, index + 1, "") }),
     [routes]
   );
 
   const handleChangeRoute = useCallback(
     curry(function changeRoute(index, event) {
-      onChange({ route: modifyArrayValue(routes, index, event.target.value) });
+      onChange({ route: modify(routes, index, event.target.value) });
     }),
     [routes]
   );
 
   const handleDeleteRoute = useCallback(
-    (index) => onChange({ route: removeArrayValue(routes, index) }),
+    (index) => onChange({ route: remove(routes, index) }),
     [routes]
   );
 

@@ -1,10 +1,10 @@
-import { mergeDeep, objectCheck } from "./object";
+import { mergeDeep, check as objectCheck } from "./object";
 
 /**
  * Throws error if param is not array
  * @param {*} possibleArray
  */
-export function arrayCheck(possibleArray) {
+export function check(possibleArray) {
   if (!Array.isArray(possibleArray))
     throw new Error(
       "Param is not an array. Please use arrays with this function!"
@@ -18,8 +18,8 @@ export function arrayCheck(possibleArray) {
  * @param {*} value Value that will be inserted at index.
  * @returns {Array} Modified array
  */
-export function insertArrayValue(array = [], index, value) {
-  arrayCheck(array);
+export function insert(array = [], index, value) {
+  check(array);
   const output = [...array];
   output.splice(index, 0, value);
   return output;
@@ -31,8 +31,8 @@ export function insertArrayValue(array = [], index, value) {
  * @param {number} index Index of the value that will be removed.
  * @returns {Array} Modified array
  */
-export function removeArrayValue(array = [], index) {
-  arrayCheck(array);
+export function remove(array = [], index) {
+  check(array);
   const output = [...array];
   output.splice(index, 1);
   return output;
@@ -45,8 +45,8 @@ export function removeArrayValue(array = [], index) {
  * @param {*} value Modified value that will replace value at index.
  * @returns {Array} Modified array
  */
-export function modifyArrayValue(array = [], index, value) {
-  arrayCheck(array);
+export function modify(array = [], index, value) {
+  check(array);
   const output = [...array];
   output.splice(index, 1, value);
   return output;
@@ -59,8 +59,8 @@ export function modifyArrayValue(array = [], index, value) {
  * @param {Object} value Modified value that will be merged to current value at index.
  * @returns {Object[]} Modified array
  */
-export function mergeArrayValue(array = [], index, value = {}) {
-  arrayCheck(array);
+export function merge(array = [], index, value = {}) {
+  check(array);
   objectCheck(value);
   const output = [...array];
   objectCheck(output[index]);

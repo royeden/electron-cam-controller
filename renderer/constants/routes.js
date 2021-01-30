@@ -17,7 +17,6 @@ export const ROUTES_TO_MAPPER = {
 
 export function createBaseRoute(route = "") {
   return createDefaultRoute({
-    from: ROUTES_FROM_MAPPER[route],
     route,
     to: ROUTES_TO_MAPPER[route],
   });

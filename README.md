@@ -80,7 +80,11 @@ Este proyecto fue creado a partir de un `template` disponible [acá](https://git
 
 * Como usar los procesos de main y renderer en electron: https://richiepineda.medium.com/using-electrons-ipcrenderer-and-ipcmain-to-create-a-server-less-desktop-application-751cc5f26a0d
 
-* [P5.js](https://github.com/processing/p5.js), una excelente librería open-source para el manejo de canvas, lamentablemente generaba lag con React y tuve que reimplementar algunas funcionalidades que vienen directamente del código de p5 <3
+* Utils inspiradas en las funciones de [Ramda](https://ramdajs.com/)
+
+* [P5.js](https://github.com/processing/p5.js), una excelente librería open-source para el manejo de canvas, lamentablemente generaba lag con React y tuve que reimplementar algunas funcionalidades que vienen directamente del código de p5 <3.
+
+* Todos los archivos basados en una guía tienen un link al artículo/guía que se utilizó para esas funciones <3
 
 ## Como desarrollar localmente
 

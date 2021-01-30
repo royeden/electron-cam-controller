@@ -12,10 +12,12 @@ import tailwind from "../../../tailwind.config";
 import { VIDEO } from "../../constants/video";
 import { drawKeyPoints, drawSkeleton } from "../../utils/posenet";
 import { RoutesContext } from "../../context/RoutesContext";
-import { objectMap } from "../../utils/object";
+import { map } from "../../utils/object";
 import { createRoute } from "../../utils/route";
 
 import Button from "../UI/Button";
+import { BASE_ROUTES, ROUTES_FROM_MAPPER } from "../../constants/routes";
+import { BODY_FROM_MAPPER } from "../../constants/posenet";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
@@ -172,7 +174,10 @@ export default function Camera() {
           b /= pixels.length / 4;
           routes.rgb.forEach((route) => {
             if (route.enabled) {
-              const oscRoute = createRoute(route);
+              const oscRoute = createRoute({
+                ...route,
+                from: ROUTES_FROM_MAPPER[BASE_ROUTES.rgb],
+              });
               sendOSCMessage(
                 `/${oscRoute.route}`,
                 oscRoute.message(r),
@@ -193,7 +198,10 @@ export default function Camera() {
           });
           routes.score.forEach((route) => {
             if (route.enabled) {
-              const oscScoreRoute = createRoute(route);
+              const oscScoreRoute = createRoute({
+                ...route,
+                from: ROUTES_FROM_MAPPER[BASE_ROUTES.score],
+              });
               sendOSCMessage(
                 `/${oscScoreRoute.route}`,
                 oscScoreRoute.message(score)
@@ -205,9 +213,13 @@ export default function Camera() {
               const partRoutes = routes[part];
               const bodyPart = { score: partScore, x, y };
               partRoutes.forEach((subroutes) => {
-                objectMap(subroutes, (subroute, key) => {
+                map(subroutes, (subroute, key) => {
                   if (subroute.enabled) {
-                    const oscRoute = createRoute(subroute);
+                    // TODO this should map to possible resolutions for the camera
+                    const oscRoute = createRoute({
+                      ...subroute,
+                      from: BODY_FROM_MAPPER[key],
+                    });
                     sendOSCMessage(
                       `/${oscRoute.route}`,
                       oscRoute.message(bodyPart[key])

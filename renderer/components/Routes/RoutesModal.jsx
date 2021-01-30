@@ -132,6 +132,14 @@ export default function RoutesModal() {
     reset();
   };
 
+  const editingForm = useMemo(() => {
+    if (defined(editingIndex)) {
+      const { id, ...currentForm } = form[editingIndex];
+      return currentForm;
+    }
+    return null;
+  }, [editingIndex, form]);
+
   return (
     <Modal
       className="w-2/3 max-w-full p-8 mx-6 overflow-hidden lg:w-1/2 h-4/5 min-w-min"
@@ -167,7 +175,7 @@ export default function RoutesModal() {
                   isBodyPart={isBodyPart}
                   onBack={() => setEditingIndex(undefined)}
                   onSave={handleChange}
-                  routes={form[editingIndex]}
+                  routes={editingForm}
                 />
               ) : (
                 <Routes

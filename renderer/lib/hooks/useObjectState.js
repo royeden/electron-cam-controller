@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { mergeDeep, objectCheck } from "../../utils/object";
+import { mergeDeep, check as objectCheck } from "../../utils/object";
 
 export default function useObjectState(initialState = {}) {
   objectCheck(initialState);

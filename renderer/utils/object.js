@@ -1,9 +1,11 @@
+import { check as arrayCheck } from "./array";
+
 // Thx <3 <3 <3
 // https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge
 
 /**
  * Simple object check.
- * @param item
+ * @param {*} item
  * @returns {boolean}
  */
 export function isObject(item) {
@@ -38,15 +40,15 @@ export function mergeDeep(target, source) {
  * @returns {Object} Mapped object
  */
 
-export function objectMap(
+export function map(
   object = {},
   callback = function defaultCallback(value, key = "", object = {}) {
     return value;
   }
 ) {
   return Object.keys(object).reduce(
-    (output, key) =>
-      mergeDeep(output, { [key]: callback(object[key], key, object) }),
+    (mappedObject, key) =>
+      mergeDeep(mappedObject, { [key]: callback(object[key], key, object) }),
     {}
   );
 }
@@ -64,9 +66,42 @@ export function objectMap(
  * Throws error if param is not object
  * @param {*} possibleObject
  */
-export function objectCheck(possibleObject) {
+export function check(possibleObject) {
   if (!isObject(possibleObject))
     throw new Error(
       "Param is not an object. Please use objects with this function!"
     );
+}
+
+/**
+ * Picks specific keys from an object
+ * @param {string[]} keys
+ * @param {Object} object
+ */
+export function pick(keys = [], object = {}) {
+  arrayCheck(keys);
+  check(object);
+  return keys.reduce(
+    (pickedObject, key) => mergeDeep(pickedObject, { [key]: object[key] }),
+    {}
+  );
+}
+
+/**
+ * Omits specific keys from an object.
+ * SUGGESTION: use destructuring when available, should be quicker than this
+ * @param {string[]} keys
+ * @param {Object} object
+ */
+export function omit(keys = [], object = {}) {
+  arrayCheck(keys);
+  check(object);
+  const keysSet = new Set(keys);
+  const objectKeysSet = new Set(Object.keys(object));
+  return pick(
+    Array.from(
+      new Set([...objectKeysSet].filter((key) => !keysSet.has(key))),
+      object
+    )
+  );
 }

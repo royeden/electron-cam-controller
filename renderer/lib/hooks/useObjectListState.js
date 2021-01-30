@@ -1,14 +1,14 @@
 import { useState } from "react";
 import {
-  arrayCheck,
-  insertArrayValue,
-  mergeArrayValue,
-  modifyArrayValue,
-  removeArrayValue,
+  check as arrayCheck,
+  insert,
+  merge as arrayMerge,
+  modify,
+  remove as arrayRemove,
 } from "../../utils/array";
 import { curry } from "../../utils/fp";
 
-import { objectCheck } from "../../utils/object";
+import { check as objectCheck } from "../../utils/object";
 
 export default function useObjectListState(initialState = []) {
   arrayCheck(initialState);
@@ -17,20 +17,20 @@ export default function useObjectListState(initialState = []) {
 
   const add = curry(function addStateItem(index, item) {
     objectCheck(item);
-    setState((prevState) => insertArrayValue(prevState, index, item));
+    setState((prevState) => insert(prevState, index, item));
   });
 
   const remove = (index) =>
-    setState((prevState) => removeArrayValue(prevState, index));
+    setState((prevState) => arrayRemove(prevState, index));
 
   const set = curry(function setStateItem(index, item) {
     objectCheck(item);
-    setState((prevState) => modifyArrayValue(prevState, index, item));
+    setState((prevState) => modify(prevState, index, item));
   });
 
   const merge = curry(function setStateItem(index, item) {
     objectCheck(item);
-    setState((prevState) => mergeArrayValue(prevState, index, item));
+    setState((prevState) => arrayMerge(prevState, index, item));
   });
 
   return [state, { add, remove, set, merge }];

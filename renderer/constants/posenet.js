@@ -42,17 +42,14 @@ export const BODY_TO_MAPPER = {
 export function createBodyPartRoute(bodyPart) {
   return {
     [BODY_PART.x]: createDefaultRoute({
-      from: BODY_FROM_MAPPER[BODY_PART.x],
       route: `${bodyPart}/x`,
       to: BODY_TO_MAPPER[BODY_PART.x],
     }),
     [BODY_PART.y]: createDefaultRoute({
-      from: BODY_FROM_MAPPER[BODY_PART.y],
       route: `${bodyPart}/y`,
       to: BODY_TO_MAPPER[BODY_PART.y],
     }),
     [BODY_PART.score]: createDefaultRoute({
-      from: BODY_FROM_MAPPER[BODY_PART.score],
       route: `${bodyPart}/score`,
       to: BODY_TO_MAPPER[BODY_PART.score],
     }),
