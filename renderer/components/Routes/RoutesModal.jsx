@@ -179,7 +179,7 @@ export default function RoutesModal() {
                 />
               ) : (
                 <Routes
-                  editingRoute={editingRoute}
+                  editingRoute={cachedRoute}
                   form={form}
                   isBodyPart={isBodyPart}
                   onAdd={handleAddRoute}
