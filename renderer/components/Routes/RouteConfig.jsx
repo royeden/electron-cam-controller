@@ -20,7 +20,8 @@ export default function RouteConfig({
   const routeKey = `${editingRoute}-route`;
   const routeKeys = isBodyPart && Object.keys(routes);
   const reset = () => set(routes);
-  const save = () => {
+  const save = (event) => {
+    event.preventDefault();
     onSave(routesState);
     onBack();
   };
@@ -55,14 +56,16 @@ export default function RouteConfig({
                   routeIndex + 1 < routeKeys.length,
               })}
             >
-              <RouteInput
-                enabled={routesState[route].enabled}
-                onChange={(payload) => merge({ [route]: payload })}
-                route={route}
-                routeKey={routeKey}
-                routes={routesState[route].route}
-                to={routesState[route].to}
-              />
+              <form onSubmit={save}>
+                <RouteInput
+                  enabled={routesState[route].enabled}
+                  onChange={(payload) => merge({ [route]: payload })}
+                  route={route}
+                  routeKey={routeKey}
+                  routes={routesState[route].route}
+                  to={routesState[route].to}
+                />
+              </form>
             </div>
           ))
         ) : (

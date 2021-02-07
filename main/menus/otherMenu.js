@@ -1,9 +1,26 @@
+const { ipcMain } = require("electron");
+
+const CONFIG_EVENTS = require("../events/config");
 const { locales } = require("../i18n/config");
 
 module.exports = (app, mainWindow, shell, i18n, changeLanguage, isDev) => [
   {
     label: "&OSC Cam",
     submenu: [
+      {
+        label: `&${i18n.t("app.open")}`,
+        accelerator: "Ctrl+O",
+        click: function () {
+          ipcMain.emit(CONFIG_EVENTS.import)
+        },
+      },
+      {
+        label: `&${i18n.t("app.save")}`,
+        accelerator: "Ctrl+S",
+        click: function () {
+          ipcMain.emit(CONFIG_EVENTS.export)
+        },
+      },
       {
         label: `&${i18n.t("app.quit")}`,
         accelerator: "Ctrl+Q",

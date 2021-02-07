@@ -1,5 +1,7 @@
 {
   "app": {
+    "open": "Importar configuración desde archivo",
+    "save": "Guardar configuración",
     "quit": "Salir"
   },
   "view": {

@@ -1,5 +1,7 @@
 {
   "app": {
+    "open": "Import config file",
+    "save": "Save config",
     "quit": "Quit"
   },
   "view": {

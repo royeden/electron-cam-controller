@@ -1,4 +1,5 @@
 import ReactModal from "react-modal";
+import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 import "tippy.js/dist/tippy.css"; // optional
 import "tippy.js/animations/shift-away.css";
@@ -18,6 +19,14 @@ function MyApp({ Component, pageProps }) {
       <RoutesProvider>
         <Component {...pageProps} />
       </RoutesProvider>
+      <Toaster
+        toastOptions={{
+          style: {
+            maxWidth: 'fit-content',
+            width: "auto",
+          },
+        }}
+      />
     </I18nProvider>
   );
 }

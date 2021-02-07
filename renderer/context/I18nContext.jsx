@@ -6,6 +6,7 @@ import translations from "../i18n/translations";
 import useToggle from "../lib/hooks/useToggle";
 import Loader from "../components/UI/Loader";
 import I18N_EVENTS from "../../main/events/i18n";
+import CONFIG_EVENTS from "../../main/events/config";
 
 const i18n = rosetta(translations);
 
@@ -43,15 +44,26 @@ export default function I18nProvider({ children }) {
   };
 
   useEffect(() => {
-    if (process.browser && window) {
+    if (process.browser) {
       window.ipcRenderer.on(I18N_EVENTS.changeLanguage, (event, language) => {
         i18nWrapper.locale(language);
       });
-      const language = window.ipcRenderer.sendSync(I18N_EVENTS.getInitialLanguage);
+      const language = window.ipcRenderer.sendSync(
+        I18N_EVENTS.getInitialLanguage
+      );
       i18nWrapper.locale(language || defaultLocale);
-      toggleLoaded();
+      if (!loaded) {
+        window.ipcRenderer.send(CONFIG_EVENTS.loaded);
+        toggleLoaded();
+      } else {
+        return () => {
+          window.addEventListener("beforeUnload", () =>
+            window.ipcRenderer.send(CONFIG_EVENTS.loading)
+          );
+        };
+      }
     }
-  }, []);
+  }, [loaded]);
 
   return loaded ? (
     <Provider value={{ ...i18nWrapper, loaded }}>{children}</Provider>

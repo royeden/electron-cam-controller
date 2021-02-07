@@ -1,3 +1,6 @@
+const { ipcMain } = require("electron");
+
+const CONFIG_EVENTS = require("../events/config");
 const { locales } = require("../i18n/config");
 
 module.exports = (app, mainWindow, shell, i18n, changeLanguage, isDev) =>
@@ -8,6 +11,20 @@ module.exports = (app, mainWindow, shell, i18n, changeLanguage, isDev) =>
         {
           label: i18n.t("app.about"),
           role: "about",
+        },
+        {
+          label: i18n.t("app.open"),
+          accelerator: "Command+O",
+          click: () => {
+            ipcMain.emit(CONFIG_EVENTS.import);
+          },
+        },
+        {
+          label: i18n.t("app.save"),
+          accelerator: "Command+S",
+          click: () => {
+            ipcMain.emit(CONFIG_EVENTS.export);
+          },
         },
         {
           type: "separator",
