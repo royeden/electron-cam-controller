@@ -6,7 +6,7 @@
   },
   "productName": "electron-camera-controller",
   "description": "",
-  "version": "0.0.62",
+  "version": "0.0.7",
   "main": "main/index.js",
   "scripts": {
     "generate-css-types": "tailwindcss-classnames --config tailwind.config.js",

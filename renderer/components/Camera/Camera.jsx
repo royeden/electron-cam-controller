@@ -1,27 +1,39 @@
 // THX <3 <3 <3
 // https://medium.com/@kirstenlindsmith/translating-posenet-into-react-js-58f438c8605d
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import * as poseNet from "@tensorflow-models/posenet";
 import "@tensorflow/tfjs-backend-webgl";
 
 import OSC_EVENTS from "../../../main/events/osc";
-import useAnimationFrame from "../../lib/hooks/useAnimationFrame";
+import Button from "../UI/Button";
+import Input from "../UI/Input";
+import useAnimation from "../../lib/hooks/useAnimation";
 import useToggle from "../../lib/hooks/useToggle";
 import useTranslation from "../../lib/hooks/useTranslation";
 import tailwind from "../../../tailwind.config";
-import { VIDEO } from "../../constants/video";
-import { drawKeyPoints, drawSkeleton } from "../../utils/posenet";
-import { RoutesContext } from "../../context/RoutesContext";
-import { map } from "../../utils/object";
-import { createRoute } from "../../utils/route";
-
-import Button from "../UI/Button";
 import { BASE_ROUTES, ROUTES_FROM_MAPPER } from "../../constants/routes";
 import { BODY_FROM_MAPPER } from "../../constants/posenet";
+import {
+  INTERVAL_TYPES,
+  INTERVAL_VALUE_TYPES,
+  INTERVAL_VALUE_TYPES_DEFAULTS,
+  INTERVAL_VALUE_TYPES_LIMITS,
+} from "../../constants/intervalConfig";
+import { VIDEO } from "../../constants/video";
+import { RoutesContext } from "../../context/RoutesContext";
+import { drawKeyPoints, drawSkeleton } from "../../utils/posenet";
+import { createRoute } from "../../utils/route";
+import { map } from "../../utils/object";
 
 // TODO move every useEffect to hooks, it's messy here
 const skeletonLineWidth = 5;
-const defaultPort = 3333;
 
 export default function Camera() {
   const { t } = useTranslation();
@@ -31,14 +43,28 @@ export default function Camera() {
   const canvasRef = useRef(null);
   const [cameraOn, toggleCameraOn] = useToggle();
   const [camera, setCamera] = useState(0);
-  const [oscPort, setOscPort] = useState(`${defaultPort}`);
-  const [oscPortValue, setOscPortValue] = useState(defaultPort);
+  const [oscPort, setOscPort] = useState(`${3333}`);
+  const [oscPortValue, setOscPortValue] = useState(3333);
   const [oscLoaded, , overrideOscLoaded] = useToggle();
   const [cameras, setCameras] = useState([]);
   const [minScore, setMinScore] = useState(0.3);
   const [modelActive, toggleModelActive] = useToggle();
   const [modelLoaded, , setModelLoaded] = useToggle();
   const [modelSkeleton, toggleModelSkeleton] = useToggle();
+  const [trackingType, setTrackingType] = useState(INTERVAL_TYPES.frame);
+  const [trackingIntervalType, setTrackingIntervalType] = useState(
+    INTERVAL_VALUE_TYPES.ms
+  );
+  const [trackingInterval, setTrackingInterval] = useState(1000);
+
+  const trackingIntervalValue = useMemo(() => {
+    if (trackingIntervalType === INTERVAL_VALUE_TYPES.bpm)
+      return 60000 / trackingInterval;
+    if (trackingIntervalType === INTERVAL_VALUE_TYPES.fps)
+      return 1000 / trackingInterval;
+    if (trackingIntervalType === INTERVAL_VALUE_TYPES.ms)
+      return trackingInterval;
+  }, [trackingInterval, trackingIntervalType]);
 
   const sendOSCMessage = useCallback(
     (route, ...messages) => {
@@ -64,8 +90,8 @@ export default function Camera() {
   useEffect(() => {
     if (process.browser) {
       // window.ipcRenderer.on(OSC_EVENTS.sent, console.log);
+      createClient();
     }
-    createClient();
   }, []);
 
   useEffect(() => {
@@ -138,59 +164,65 @@ export default function Camera() {
     }
   }, []);
 
-  useAnimationFrame(() => {
+  const drawCamera = useCallback(() => {
+    const video = videoRef?.current;
+    const canvas = canvasRef?.current;
+    if (cameraOn && canvas) {
+      const canvasContext = canvas.getContext("2d");
+
+      canvasContext.clearRect(0, 0, VIDEO.width, VIDEO.height);
+
+      canvasContext.save();
+      canvasContext.scale(-1, 1);
+      canvasContext.translate(-VIDEO.width, 0);
+      canvasContext.drawImage(video, 0, 0, VIDEO.width, VIDEO.height);
+      canvasContext.restore();
+
+      // TODO move this function logic into async/await blocking function
+      try {
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        const { data: pixels } = canvasContext.getImageData(
+          0,
+          0,
+          VIDEO.width,
+          VIDEO.height
+        );
+        pixels.forEach((colorValue, index) => {
+          if (index % 4 === 0) r += colorValue;
+          if (index % 4 === 1) g += colorValue;
+          if (index % 4 === 2) b += colorValue;
+        });
+        r /= pixels.length / 4;
+        g /= pixels.length / 4;
+        b /= pixels.length / 4;
+        routes.rgb.forEach((route) => {
+          if (route.enabled) {
+            const oscRoute = createRoute({
+              ...route,
+              from: ROUTES_FROM_MAPPER[BASE_ROUTES.rgb],
+            });
+            sendOSCMessage(
+              `/${oscRoute.route}`,
+              oscRoute.message(r),
+              oscRoute.message(g),
+              oscRoute.message(b)
+            );
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [cameraOn]);
+
+  const trackPose = useCallback(() => {
     const video = videoRef?.current;
     const canvas = canvasRef?.current;
     const net = posenet?.current;
     if (cameraOn && canvas) {
       const canvasContext = canvas.getContext("2d");
-
-      function drawCamera() {
-        canvasContext.clearRect(0, 0, VIDEO.width, VIDEO.height);
-
-        canvasContext.save();
-        canvasContext.scale(-1, 1);
-        canvasContext.translate(-VIDEO.width, 0);
-        canvasContext.drawImage(video, 0, 0, VIDEO.width, VIDEO.height);
-        canvasContext.restore();
-
-        try {
-          let r = 0;
-          let g = 0;
-          let b = 0;
-          const { data: pixels } = canvasContext.getImageData(
-            0,
-            0,
-            VIDEO.width,
-            VIDEO.height
-          );
-          pixels.forEach((colorValue, index) => {
-            if (index % 4 === 0) r += colorValue;
-            if (index % 4 === 1) g += colorValue;
-            if (index % 4 === 2) b += colorValue;
-          });
-          r /= pixels.length / 4;
-          g /= pixels.length / 4;
-          b /= pixels.length / 4;
-          routes.rgb.forEach((route) => {
-            if (route.enabled) {
-              const oscRoute = createRoute({
-                ...route,
-                from: ROUTES_FROM_MAPPER[BASE_ROUTES.rgb],
-              });
-              sendOSCMessage(
-                `/${oscRoute.route}`,
-                oscRoute.message(r),
-                oscRoute.message(g),
-                oscRoute.message(b)
-              );
-            }
-          });
-        } catch (e) {
-          console.log(e);
-        }
-      }
-
       if (modelActive && modelLoaded) {
         async function detectPose() {
           const { score, keypoints } = await net.estimateSinglePose(video, {
@@ -256,6 +288,20 @@ export default function Camera() {
     }
   }, [cameraOn, minScore, modelActive, modelLoaded, modelSkeleton, routes]);
 
+  useAnimation(
+    drawCamera,
+    INTERVAL_TYPES.frame,
+    cameraOn &&
+      !(modelActive && modelSkeleton && trackingType === INTERVAL_TYPES.frame)
+  );
+
+  useAnimation(
+    trackPose,
+    trackingType,
+    cameraOn && modelActive && modelLoaded,
+    trackingIntervalValue
+  );
+
   return (
     <div className="w-1/2">
       <video className="hidden" playsInline ref={videoRef} />
@@ -264,7 +310,7 @@ export default function Camera() {
       <div className="flex flex-col w-full max-w-screen-md ">
         <div className="flex flex-col items-center my-4">
           {cameraOn ? (
-            <div className="flex justify-between w-full">
+            <div className="flex flex-col flex-wrap items-center justify-between lg:w-full lg:flex-row">
               <Button
                 title={"Change camera"}
                 onClick={async () => {
@@ -315,6 +361,63 @@ export default function Camera() {
                     : t("camera.controls.skeleton.status.on"),
                 })}
               </Button>
+              <select
+                className="bg-dark-300"
+                value={trackingType}
+                onChange={(event) => setTrackingType(event.target.value)}
+              >
+                {Object.values(INTERVAL_TYPES).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+              {trackingType !== INTERVAL_TYPES.frame && (
+                <>
+                  <select
+                    className="bg-dark-300"
+                    value={trackingIntervalType}
+                    onChange={(event) => {
+                      const type = event.target.value;
+                      if (
+                        trackingInterval <
+                          INTERVAL_VALUE_TYPES_LIMITS[type].min ||
+                        trackingInterval > INTERVAL_VALUE_TYPES_LIMITS[type].max
+                      )
+                        setTrackingInterval(
+                          INTERVAL_VALUE_TYPES_DEFAULTS[type]
+                        );
+                      setTrackingIntervalType(type);
+                    }}
+                  >
+                    {Object.values(INTERVAL_VALUE_TYPES).map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                  <Input
+                    {...INTERVAL_VALUE_TYPES_LIMITS[trackingIntervalType]}
+                    step="1"
+                    value={trackingInterval}
+                    type="number"
+                    className="bg-dark-100 border-dark-100"
+                    onChange={(event) => {
+                      const value = parseInt(event.target.value, 10);
+                      setTrackingInterval((prevState) =>
+                        value >=
+                          INTERVAL_VALUE_TYPES_LIMITS[trackingIntervalType]
+                            .min &&
+                        value <=
+                          INTERVAL_VALUE_TYPES_LIMITS[trackingIntervalType].max
+                          ? value
+                          : prevState
+                      );
+                    }}
+                  />
+                  {trackingIntervalType}
+                </>
+              )}
             </div>
           ) : (
             <>
