@@ -143,7 +143,7 @@ export default function Camera() {
         }
         setupCamera();
 
-        async function setupCanvas() {
+        function setupCanvas() {
           canvas.width = VIDEO.width;
           canvas.height = VIDEO.height;
         }
@@ -215,7 +215,7 @@ export default function Camera() {
         console.log(e);
       }
     }
-  }, [cameraOn]);
+  }, [cameraOn, routes]);
 
   const trackPose = useCallback(() => {
     const video = videoRef?.current;
@@ -245,6 +245,7 @@ export default function Camera() {
               const partRoutes = routes[part];
               const bodyPart = { score: partScore, x, y };
               partRoutes.forEach((subroutes) => {
+                console.log(subroutes);
                 map(subroutes, (subroute, key) => {
                   if (subroute.enabled) {
                     // TODO this should map to possible resolutions for the camera
@@ -292,14 +293,17 @@ export default function Camera() {
     drawCamera,
     INTERVAL_TYPES.frame,
     cameraOn &&
-      !(modelActive && modelSkeleton && trackingType === INTERVAL_TYPES.frame)
+      !(modelActive && modelSkeleton && trackingType === INTERVAL_TYPES.frame),
+    1000,
+    [routes]
   );
 
   useAnimation(
     trackPose,
     trackingType,
     cameraOn && modelActive && modelLoaded,
-    trackingIntervalValue
+    trackingIntervalValue,
+    [routes]
   );
 
   return (

@@ -8,7 +8,8 @@ export default function useAnimation(
   cb,
   type = INTERVAL_TYPES.frame,
   run = true,
-  timeout = 1000
+  timeout = 1000,
+  dependencies = []
 ) {
   if (!Object.values(INTERVAL_TYPES).includes(type))
     throw new Error("Invalid animation interval type");
@@ -50,6 +51,7 @@ export default function useAnimation(
       if (usesSetInterval) clearInterval(frame.current);
     };
   }, [
+    ...dependencies,
     run,
     timeout,
     usesRequestAnimationFrame,
