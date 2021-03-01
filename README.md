@@ -161,24 +161,25 @@ Para generar una versión del proyecto para las plataformas soportadas (Windows 
 
 - [x] ~Agregar traducciones de los controles de la app a español.~
 - [x] ~Optimizar el envío de datos y tracking / tracking configurable (modo frame by frame, modo cada x cantidad de tiempo, modo idle para reducir el impacto de CPU).~
-- [] Agregar una forma de trackeo en intervalos random.
-- [] Agregar una forma de enviar bangs a una o más rutas específicas.
-- [] Agregar linters, reforzar un estilo de código y validar posibles errores.
-- [] Agregar git-hooks.
+- [ ] Agregar una forma de trackeo en intervalos random.
+- [ ] Agregar una forma de enviar bangs a una o más rutas específicas.
+- [ ] Agregar linters, reforzar un estilo de código y validar posibles errores.
+- [ ] Agregar git-hooks.
 - [x] ~Permitir cambiar la cámara que se está usando.~
-- [] Permitir que todas las funciones de la aplicación sean controlables por OSC.
-- [] Agregar más ejemplos y templates en JSON.
-- [] Rediseñar la UI (interfaz de usuarix) para un diseño más limpio (In progress).
-- [] Agregar tutoriales.
-- [] Permitir identificar poses fuera del rango de la cámara?
-- [] Configurar prefijos y sufijos para los mensajes de OSC?
-- [] Establecer rangos dinámicos de acciones?
+- [ ] Permitir que todas las funciones de la aplicación sean controlables por OSC.
+- [ ] Agregar más ejemplos y templates en JSON.
+- [ ] Rediseñar la UI (interfaz de usuarix) para un diseño más limpio (In progress).
+- [ ] Agregar tutoriales.
+- [ ] Permitir identificar poses fuera del rango de la cámara?
+- [ ] Configurar prefijos y sufijos para los mensajes de OSC?
+- [ ] Establecer rangos dinámicos de acciones?
 - [x] ~Guardar y cargar configuración en un JSON~.
-- [] Agregar configuración para la cámara web.
-- [] Permitir transformar los valores de OSC (redondear a números enteros / posiciones decimales). (In progress)
-- [] Identificar poses fuera del rango de la cámara? (In progress)
+- [ ] Agregar configuración para la cámara web.
+- [ ] Permitir transformar los valores de OSC (redondear a números enteros / posiciones decimales). (In progress)
+- [ ] Identificar poses fuera del rango de la cámara? (In progress)
 - [x] ~Rutas configurables para el envío de OSC?~
-- Ver qué otros features divertidos se pueden agregar, siempre se aceptan sugerencias / contribuciones <3.
+
+Ver qué otros features divertidos se pueden agregar, siempre se aceptan sugerencias / contribuciones <3.
 
 ## Como colaborar con este proyecto
 
