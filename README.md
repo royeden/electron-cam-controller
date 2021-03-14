@@ -1,9 +1,12 @@
-# Electron Camera Controller
+# (ARCHIVED) Electron Camera Controller
 
 * [En Español](#español)
 * [~~In English~~](#english) (This will be added in the future).
 
 # Español
+
+# ARCHIVADO:
+Este repositorio queda archivado, ya que es funcional para el experimento realizado, pero no tiene las últimas versiones de Electron y se rompe en Windows. Próximamente se viene una versión funcional en todas las plataformas posibles de este proyecto.
 
 ## Sobre el proyecto
 
