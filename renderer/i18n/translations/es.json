@@ -1,48 +1,62 @@
 {
-  "menu": {
-    "app": {
-      "quit": "Salir"
+  "routes": {
+    "score": "Puntuación",
+    "rgb": "RGB",
+    "nose": "Nariz",
+    "leftEye": "Ojo izquierdo",
+    "rightEye": "Ojo derecho",
+    "leftEar": "Oreja izquierda",
+    "rightEar": "Oreja derecha",
+    "leftShoulder": "Hombro izquierdo",
+    "rightShoulder": "Hombro derecho",
+    "leftElbow": "Codo izquierdo",
+    "rightElbow": "Codo derecho",
+    "leftWrist": "Muñeca izquierda",
+    "rightWrist": "Muñeca derecha",
+    "leftHip": "Cadera izquierda",
+    "rightHip": "Cadera derecha",
+    "leftKnee": "Rodilla izquierda",
+    "rightKnee": "Rodilla derecha",
+    "leftAnkle": "Tobillo izquierdo",
+    "rightAnkle": "Tobillo derecho"
+  },
+  "bodyControls": {
+    "form": {
+      "save": "Guardar cambios"
     },
-    "view": {
-      "title": "Ver",
-      "reload": "Recargar",
-      "fullscreen": "Pantalla completa",
-      "minimize": "Minimizar"
+    "route": {
+      "add": "Añadir ruta",
+      "copy": "Copiar ruta",
+      "delete": "Borrar ruta",
+      "edit": "Editar ruta",
+      "reset": "Deshacer todos los cambios",
+      "Save": "Guardar ruta"
     },
-    "help": {
-      "title": "Ayuda",
-      "about": "Sobre OSC Cam",
-      "examples": "Ejemplos"
-    },
-    "language": {
-      "title": "Idioma",
-      "en": "Inglés",
-      "es": "Español"
-    },
-    "development": {
-      "inspector": "Alternar inspector"
+    "subroute": {
+      "add": "Añadir subruta",
+      "delete": "Borrar subruta"
     }
   },
   "camera": {
     "controls": {
       "skeleton": {
-        "toggle": "{{ status }} tracking",
-        "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
-        "status": {
-          "on": "Encender",
-          "off": "Apagar"
-        }
-      },
-      "tracking": {
         "toggle": "{{ status }} esqueleto",
         "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
         "status": {
           "on": "Mostrar",
+          "off": "Apagar"
+        }
+      },
+      "tracking": {
+        "toggle": "{{ status }} tracking",
+        "modelLoading": "Por favor aguarde a que el modelo termine de cargar...",
+        "status": {
+          "on": "Encender",
           "off": "Ocultar"
         }
       },
       "camera": {
-        "notice": "Esta apliacación utiliza la cámara web, por favor, enciende tu cámara web",
+        "notice": "Esta aplicación utiliza la cámara web, por favor, enciende tu cámara web",
         "turnOn": "¡Encender la cámara!"
       },
       "osc": {

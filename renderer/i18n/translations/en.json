@@ -1,32 +1,46 @@
 {
-  "menu": {
-    "app": {
-      "quit": "Quit"
+  "routes": {
+    "score": "Score",
+    "rgb": "RGB",
+    "nose": "Nose",
+    "leftEye": "Left Eye",
+    "rightEye": "Right Eye",
+    "leftEar": "Left Ear",
+    "rightEar": "Right Ear",
+    "leftShoulder": "Left Shoulder",
+    "rightShoulder": "Right Shoulder",
+    "leftElbow": "Left Elbow",
+    "rightElbow": "Right Elbow",
+    "leftWrist": "Left Wrist",
+    "rightWrist": "Right Wrist",
+    "leftHip": "Left Hip",
+    "rightHip": "Right Hip",
+    "leftKnee": "Left Knee",
+    "rightKnee": "Right Knee",
+    "leftAnkle": "Left Ankle",
+    "rightAnkle": "Right Ankle"
+  },
+  "bodyControls": {
+    "form": {
+      "save": "Save changes"
     },
-    "view": {
-      "title": "View",
-      "reload": "Reload",
-      "fullscreen": "Fullscreen",
-      "minimize": "Minimize"
+    "route": {
+      "add": "Add route",
+      "copy": "Copy route",
+      "delete": "Delete route",
+      "edit": "Edit route",
+      "reset": "Reset all changes",
+      "save": "Save route"
     },
-    "help": {
-      "title": "Help",
-      "about": "About OSC Cam",
-      "examples": "Examples"
-    },
-    "language": {
-      "title": "Language",
-      "en": "English",
-      "es": "Spanish"
-    },
-    "development": {
-      "inspector": "Toggle inspector"
+    "subroute": {
+      "add": "Add subroute",
+      "delete": "Delete subroute"
     }
   },
   "camera": {
     "controls": {
       "skeleton": {
-        "toggle": "Turn tracking {{ status }}",
+        "toggle": "Turn skeleton {{ status }}",
         "modelLoading": "Please wait for the model to load...",
         "status": {
           "on": "on",
@@ -34,7 +48,7 @@
         }
       },
       "tracking": {
-        "toggle": "Turn skeleton {{ status }}",
+        "toggle": "Turn tracking {{ status }}",
         "modelLoading": "Please wait for the model to load...",
         "status": {
           "on": "on",

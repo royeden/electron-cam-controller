@@ -1,0 +1,26 @@
+{
+  "app": {
+    "open": "Importar configuración desde archivo",
+    "save": "Guardar configuración",
+    "quit": "Salir"
+  },
+  "view": {
+    "title": "Ver",
+    "reload": "Recargar",
+    "fullscreen": "Pantalla completa",
+    "minimize": "Minimizar"
+  },
+  "help": {
+    "title": "Ayuda",
+    "about": "Sobre OSC Cam",
+    "examples": "Ejemplos"
+  },
+  "language": {
+    "title": "Idioma",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "development": {
+    "inspector": "Alternar inspector"
+  }
+}

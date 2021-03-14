@@ -1,3 +1,9 @@
+const GRID = Array.apply(null, Array(50)).map(
+  (_, value) => String(value + 1)
+);
+
+const GRID_TEMPLATES = GRID.map(value => `repeat(${value}, minmax(0, 1fr))`)
+
 module.exports = {
   purge: {
     content: ["./renderer/**/*.jsx"],
@@ -8,6 +14,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      borderColor: theme => ({
+        ...theme('colors'),
+      }),
       colors: {
         dark: {
           DEFAULT: "#121212",
@@ -51,10 +60,35 @@ module.exports = {
         "light-md":
           "0 4px 6px -1px rgba(30, 30, 30, 0.1), 0 2px 4px -1px rgba(30, 30, 30, 0.06)",
       },
+      gridColumnStart: {
+        ...GRID
+      },
+      gridColumnEnd: {
+        ...GRID
+      },
+      gridTemplateColumns: {
+        ...GRID_TEMPLATES
+      },
+      gridRowStart: {
+        ...GRID
+      },
+      gridRowEnd: {
+        ...GRID
+      },
+      gridTemplateRows: {
+        ...GRID_TEMPLATES,
+      },
+      scale: {
+        '200': '2',
+        '225': '2.25',
+        '250': '2.50',
+      },
     },
   },
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
 };

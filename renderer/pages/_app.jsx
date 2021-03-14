@@ -1,61 +1,33 @@
-import { I18nextProvider, initReactI18next } from "react-i18next";
-import { useEffect, useRef } from "react";
+import ReactModal from "react-modal";
+import { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
+import "tippy.js/dist/tippy.css"; // optional
+import "tippy.js/animations/shift-away.css";
 
-import Loader from "../components/Loader";
-import useToggle from "../lib/hooks/useToggle";
-import { defaultLocale, locales } from  "../../main/i18n.config"
 import "../styles/tailwind.css";
+import I18nProvider from "../context/I18nContext";
+import RoutesProvider from "../context/RoutesContext";
 
 function MyApp({ Component, pageProps }) {
-  const i18nRef = useRef(null);
-  const [loaded, toggleLoaded] = useToggle();
   useEffect(() => {
     if (process.browser) {
-      const i18n = window.i18n;
-      const i18nextOptions = {
-        interpolation: {
-          escapeValue: false,
-        },
-        saveMissing: true,
-        lng: "en",
-        fallbackLng: defaultLocale,
-        whitelist: locales,
-        react: {
-          useSuspense: false,
-        },
-      };
-      
-      i18n.use(initReactI18next);
-      
-      // initialize if not already initialized
-      if (!i18n.isInitialized) {
-        i18n.init(i18nextOptions);
-      }
-      
-      window.ipcRenderer.on("language-changed", (event, message) => {
-        i18n.addResourceBundle(
-          message.language,
-          message.namespace,
-          message.resource,
-          true,
-          true
-        );
-        i18n.changeLanguage(message.language);
-      });
-      i18n.changeLanguage("en");
-      window.ipcRenderer.send("get-initial-language");
-      i18nRef.current = i18n;
-      toggleLoaded();
+      ReactModal.setAppElement("#__next");
     }
   }, []);
-  return loaded ? (
-    <I18nextProvider i18n={i18nRef.current}>
-      <Component {...pageProps} />
-    </I18nextProvider>
-  ) : (
-    <div className="flex items-center justify-center w-full h-screen">
-      <Loader />
-    </div>
+  return (
+    <I18nProvider>
+      <RoutesProvider>
+        <Component {...pageProps} />
+      </RoutesProvider>
+      <Toaster
+        toastOptions={{
+          style: {
+            maxWidth: 'fit-content',
+            width: "auto",
+          },
+        }}
+      />
+    </I18nProvider>
   );
 }
 
